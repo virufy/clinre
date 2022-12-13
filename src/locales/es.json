@@ -353,6 +353,109 @@
     "title": "¡Vamos a responder unas breves preguntas!",
     "note": "Sus respuestas nos ayudarán a crear un algoritmo más preciso y coherente.",
     "allThatApply": "(seleccione todas las que correspondan)",
+    "resultPcrTest": {
+      "question": "¿Cuál fue el resultado de su prueba PCR de COVID-19?",
+      "options": {
+        "positive": "Positivo",
+        "negative": "Negativo",
+        "pending": "Pendiente",
+        "unsure": "Inseguro"
+      }
+    },
+    "whenPcrTest": "¿Cuándo se hizo la prueba PCR para detectar la COVID-19? Por favor, haga una aproximación si no está seguro(a).",
+    "whenAntibodyTest": "¿Cuándo se hizo la prueba de anticuerpos para detectar la COVID-19? Por favor, si no está seguro(a), haga una aproximación.",
+    "resultAntibodyTest": {
+      "question": "¿Cuál fue el resultado de su prueba de anticuerpos de COVID-19?",
+      "options": {
+        "positive": "Positivo",
+        "negative": "Negativo",
+        "pending": "Pendiente",
+        "unsure": "Inseguro"
+      }
+    },
+    "whenAntigenTest": "¿Cuándo se hizo el test de antígenos para COVID-19? Por favor, si no está seguro, estime.",
+    "resultAntigenTest": {
+      "question": "¿Cuál fue el resultado de su test de antígenos para COVID-19?",
+      "options": {
+        "positive": "Positivo",
+        "negative": "Negativo",
+        "pending": "Pendiente",
+        "unsure": "Inseguro"
+      }
+    },
+    "doses": {
+      "question": "¿Cuántas dosis de la vacuna COVID-19 ha recibido?",
+      "options": {
+        "none": "Ninguna",
+        "oneDoses": "Una dosis",
+        "twoDoses": "Dos dosis",
+        "threeDoses": "Tres dosis",
+        "fourDoses": "Cuatro o más dosis",
+        "decline": "Prefiero no decirlo"
+      }
+    },
+    "vaccine": {
+      "title": "Vacunación",
+      "question": "¿Ha recibido la vacuna de COVID-19?",
+      "options": {
+        "yes": "Si",
+        "no": "No",
+        "decline": "Prefiero no decirlo"
+      }
+    },
+    "age": "Edad:",
+    "ageTitle": "Edad",
+    "ageGroup": "Por favor, ingrese su edad.",
+    "enterAge": "Ingrese su edad",
+    "50+": "50 y más",
+    "unselectedAgeGroup": "Seleccione el grupo de edad",
+    "gender": {
+      "title": "Raza/Etnia",
+      "gender": "Género: ",
+      "genderTitle": "Género",
+      "question": "¿Cuál es su identidad de género?",
+      "note": "¿Cómo te describes a ti mismo?",
+      "options": {
+        "male": "Masculino",
+        "female": "Femenino",
+        "notToSay": "Prefiero no decirlo",
+        "other": "Otro",
+        "transgender": "Transgénero",
+        "selfDescribe": "Prefiero autodescribirme"
+      }
+    },
+    "ethnicity": {
+      "question": "¿Con qué razas y/o etnias te identificas? ",
+      "note": "(seleccione todas las que correspondan)",
+      "options": {
+          "asian": "Asiática",
+          "nativeAmericanOrArab": "India americana o nativa de Alaska",
+          "blackOrAfrican": "Negra o afroamericana",
+          "hispanicOrLatin": "Origen hispano, latino o español",
+          "nativeHawaiianOrPacific": "Nativa hawaiana o isleña del Pacífico",
+          "white": "Caucásica",
+          "decline": "Prefiero no decirlo"
+      }
+    },
+    "biologicalSex": {
+      "title": "Sexo biológico",
+      "question": "¿Cuál es su sexo biológico?",
+      "note": "¿Qué sexo se le asignó al nacer, en su certificado de nacimiento original? Esta información es importante para que la IA ayude a detectar el COVID-19, ya que el sonido de la voz varía según el sexo.",
+      "options": {
+        "male": "Masculino",
+        "female": "Femenino",
+        "notToSay": "Prefiero no decirlo"
+      }
+    },
+    "smokeLastSixMonths": {
+      "title": "Fumar",
+      "question": "¿Ha fumado frecuentemente en algún momento de los últimos seis meses?",
+      "note": "Esto incluye cigarrillos, narcóticos, pipas de tabaco, marihuana y vapeo con nicotina.",
+      "options": {
+        "yes": "Sí",
+        "no": "No"
+      }
+    },
     "symptoms": {
       "title": "Síntomas actuales",
       "question": "<strong>¿Cuál de los siguientes síntomas tiene actualmente?</strong>",
@@ -375,12 +478,51 @@
         "addOther": "+ Añadir otro"
       }
     },
-    "symptomsDate": "Aproximadamente, ¿cuándo comenzó a experimentar los síntomas de la COVID-19, como tos, fiebre y/o dificultad para respirar?",
+    "symptomsDate": "¿Cuántos días hace aproximadamente que comenzaron estos síntomas?",
     "options": {
       "today": "Hoy",
       "days": "Hace 1 a 3 días",
       "week": "Hace una semana",
       "overWeek": "Hace más de una semana"
+    },
+    "respiration": {
+      "title": "Current diseases",
+      "question": "<strong>Which of the below respiratory conditions do you currently have?</strong>",
+      "options": {
+        "asthma": "Asthma",
+        "bronchitis": "Bronchitis",
+        "emphysema": "COPD/emphysema",
+        "otherChronic": "Other chronic lung disease",
+        "pneumonia": "Pneumonia",
+        "tuberculosis": "Tuberculosis",
+        "none": "None",
+        "addOther": "+ Add other"
+      },
+      "addOtherPlaceholder": "Other condition"
+    },
+    "medical": {
+      "question": "<strong>Which of the below medical conditions do you currently have?</strong>",
+      "options": {
+        "allergies": "Allergies",
+        "asthma": "Asthma",
+        "bronchitis": "Bronchitis",
+        "congestiveHeart": "Congestive heart failure",
+        "emphysema": "COPD/emphysema",
+        "obesity": "Extreme obesity",
+        "heartDisease": "Heart disease",
+        "hiv": "HIV, AIDS, or impaired immune system",
+        "lungCancer": "Lung cancer",
+        "otherChronic": "Other chronic lung disease",
+        "pneumonia": "Pneumonia",
+        "pulmonary": "Pulmonary fibrosis",
+        "reflux": "Severe heartburn (GERD)",
+        "sinusitis": "Sinusitis",
+        "tuberculosis": "Tuberculosis",
+        "none": "None",
+        "other": "Other",
+        "addOther": "+ Add other"
+      },
+      "addOtherPlaceholder": "Other condition"
     },
     "stepOf": "de",
     "nextButton": "Siguiente",
@@ -393,7 +535,8 @@
   },
   "thankyou": {
     "title": "¡Gracias por su participación!",
-    "paragraph1_cough": "El resultado de su predicción será enviado a COMPENSAR."
+    "paragraph1": "Your cough donation brings Virufy one step closer to changing the world.",
+    "paragraph2": "Su identificación (ID) única de participación:<br/><2>{{submissionId}}</2>"
   },
   "footerReportProblems": {
     "message": "¿Algo mal? Reportar un problema"
@@ -407,14 +550,6 @@
         "cta": {
           "label": "Visite nuestro sitio web",
           "link": "https://virufy.org/"
-        }
-      },
-      {
-        "title": "Únete a nosotros",
-        "description": "Contribuya con sus habilidades para combatir la COVID-19.",
-        "cta": {
-          "label": "Postular ahora",
-          "link": "https://virufy.org/join"
         }
       }
     ]

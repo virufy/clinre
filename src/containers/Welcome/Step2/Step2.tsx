@@ -4,11 +4,8 @@ import { useTranslation, Trans } from 'react-i18next';
 import usePortal from 'react-useportal';
 
 // Form
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useStateMachine } from 'little-state-machine';
-import { yupResolver } from '@hookform/resolvers';
-import { ErrorMessage } from '@hookform/error-message';
-import * as Yup from 'yup';
 
 // Update Action
 import { resetStore, updateAction } from 'utils/wizard';
@@ -25,9 +22,7 @@ import { scrollToTop } from 'helper/scrollHelper';
 
 // Assets
 import HeaderSplash from 'assets/images/baseLogoSplash.png';
-
-// Icons
-import { ReactComponent as ExclamationSVG } from 'assets/icons/exclamationCircle.svg';
+import ClinReLogo from 'assets/images/clinRe.jpg';
 
 // Styles
 import {
@@ -40,17 +35,9 @@ import {
   BulletIndicator,
   WelcomeStyledFormAlternative,
   InstructionContainer,
-  WelcomeInput,
-  TextErrorContainer,
+  SupportedByContainer,
+  ClinRe,
 } from '../style';
-
-const schema = Yup.object({
-  patientId: Yup.string()
-    .matches(/^\d{6,10}$/, { message: 'patientIdRequired', excludeEmptyString: true })
-    .required('patientIdLength'),
-}).defined();
-
-type Step2Type = Yup.InferType<typeof schema>;
 
 const Step2 = (p: Wizard.StepProps) => {
   const { Portal } = usePortal({
@@ -71,25 +58,17 @@ const Step2 = (p: Wizard.StepProps) => {
   const history = useHistory();
 
   const {
-    control,
-    formState,
     handleSubmit,
     reset,
   } = useForm({
     defaultValues: store,
-    resolver: yupResolver(schema),
     mode: 'onChange',
   });
 
-  const { errors, isValid } = formState;
-
-  const onSubmit = async (values: Step2Type) => {
-    if (values) {
-      actions.update(values);
-      if (p.nextStep) {
-        setActiveStep(false);
-        history.push(p.nextStep);
-      }
+  const onSubmit = async () => {
+    if (p.nextStep) {
+      setActiveStep(false);
+      history.push(p.nextStep);
     }
   };
 
@@ -114,7 +93,6 @@ const Step2 = (p: Wizard.StepProps) => {
     if (resetExecuted.current) {
       resetExecuted.current = false;
       actions.reset({ welcome: {} });
-      reset({ patientId: '' });
     }
   }, [actions.reset, actions, reset]);
 
@@ -128,6 +106,10 @@ const Step2 = (p: Wizard.StepProps) => {
         />
         <LogoWhiteBG />
       </HeaderImageContainer>
+      <SupportedByContainer>
+        {t('main:supportedBy', 'Supported by')}
+        <ClinRe src={ClinReLogo} />
+      </SupportedByContainer>
       <CustomPurpleText mb={15}>
         {t('main:paragraph2', 'Covid-19 Cough Data Collection Study')}
       </CustomPurpleText>
@@ -173,48 +155,12 @@ const Step2 = (p: Wizard.StepProps) => {
             </Trans>
           </BlackText>
         </InstructionContainer>
-        <BlackText>
-          <strong>
-            {t('main:patientId', 'Enter patient ID:')}
-          </strong>
-        </BlackText>
-        <Controller
-          control={control}
-          name="patientId"
-          defaultValue=""
-          render={({ onChange, value, name }) => (
-            <>
-              <WelcomeInput
-                name={name}
-                value={value}
-                onChange={onChange}
-                type="text"
-                autoComplete="Off"
-                placeholder={
-                  t('main:enterPatientId', 'Enter patient ID:')
-                }
-                error={errors.patientId}
-              />
-              {errors.patientId && (
-                <TextErrorContainer>
-                  <ExclamationSVG />
-                  <ErrorMessage
-                    errors={errors}
-                    name="patientId"
-                    render={({ message }) => <p>{t(`main:${message}`)}</p>}
-                  />
-                </TextErrorContainer>
-              )}
-            </>
-          )}
-        />
 
         {activeStep && (
           <Portal>
             <WizardButtons
               invert
-              leftDisabled={!isValid}
-              leftLabel={t('helpVirufy:nextButton')}
+              leftLabel={t('helpVirufy:startButton')}
               leftHandler={handleSubmit(onSubmit)}
             />
           </Portal>

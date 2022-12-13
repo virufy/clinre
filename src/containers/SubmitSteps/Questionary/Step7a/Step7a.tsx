@@ -26,19 +26,21 @@ import ProgressIndicator from 'components/ProgressIndicator';
 
 // Styles
 import {
-  QuestionText, MainContainer,
+  QuestionText, MainContainer, QuestionAllApply,
 } from '../style';
 
 const schema = Yup.object({
-  doses: Yup.string().required(),
+  currentSymptoms: Yup.array().of(Yup.string().required()).required().default([])
+    .test('SelecteOne', 'Select one', v => !(!!v && v.length > 1 && (v.includes('none')))),
 }).defined();
 
-type Step2Type = Yup.InferType<typeof schema>;
+type Step7aType = Yup.InferType<typeof schema>;
 
-const Step2 = ({
+const Step7a = ({
   previousStep,
   nextStep,
   storeKey,
+  otherSteps,
   metadata,
 }: Wizard.StepProps) => {
   // Hooks
@@ -52,6 +54,7 @@ const Step2 = ({
 
   // States
   const [activeStep, setActiveStep] = React.useState(true);
+
   // Form
   const {
     control, handleSubmit, formState,
@@ -79,9 +82,30 @@ const Step2 = ({
   }, [handleDoBack, setDoGoBack, setTitle, setType, metadata, t]);
 
   // Handlers
-  const onSubmit = async (values: Step2Type) => {
+  const onSubmit = async (values: Step7aType) => {
     if (values) {
+      const {
+        currentSymptoms,
+      } = (values as any);
+
       action(values);
+
+      let hasSymptom = false;
+
+      // eslint-disable-next-line no-plusplus
+      for (let index = 0; index < currentSymptoms?.length; index++) {
+        if (currentSymptoms[index] !== 'none') {
+          hasSymptom = true;
+          break;
+        }
+      }
+
+      if (hasSymptom && otherSteps) {
+        setActiveStep(false);
+        history.push(otherSteps.covidSymptomsStep);
+        return;
+      }
+
       if (nextStep) {
         setActiveStep(false);
         history.push(nextStep);
@@ -97,45 +121,83 @@ const Step2 = ({
         progressBar
       />
       <QuestionText extraSpace first>
-        <Trans i18nKey="questionary:doses.question">
+        <Trans i18nKey="questionary:symptoms.question">
           <strong>Which of the below symptoms do you currently have?</strong>
         </Trans>
+        <QuestionAllApply>{t('questionary:allThatApply')}</QuestionAllApply>
       </QuestionText>
       <Controller
         control={control}
-        name="doses"
-        defaultValue={undefined}
+        name="currentSymptoms"
+        defaultValue={[]}
         render={({ onChange, value }) => (
           <OptionList
-            singleSelection
-            value={{ selected: value ? [value] : [] }}
-            onChange={v => onChange(v.selected[0])}
+            isCheckbox
+            value={{ selected: value }}
+            onChange={v => onChange(v.selected)}
             items={[
               {
                 value: 'none',
-                label: t('questionary:doses.options.none'),
+                label: t('questionary:symptoms.options.none'),
               },
               {
-                value: 'oneDoses',
-                label: t('questionary:doses.options.oneDoses'),
+                value: 'bodyAches',
+                label: t('questionary:symptoms.options.bodyAches'),
               },
               {
-                value: 'towDoses',
-                label: t('questionary:doses.options.twoDoses'),
+                value: 'dryCough',
+                label: t('questionary:symptoms.options.dryCough'),
               },
               {
-                value: 'threeDoses',
-                label: t('questionary:doses.options.threeDoses'),
+                value: 'wetCough',
+                label: t('questionary:symptoms.options.wetCough'),
               },
               {
-                value: 'fourOrMoreDoses',
-                label: t('questionary:doses.options.fourDoses'),
+                value: 'feverChillsSweating',
+                label: t('questionary:symptoms.options.feverChillsSweating'),
               },
               {
-                value: 'decline',
-                label: t('questionary:doses.options.decline'),
+                value: 'headaches',
+                label: t('questionary:symptoms.options.headaches'),
+              },
+              {
+                value: 'lossTasteAndOrSmell',
+                label: t('questionary:symptoms.options.lossTasteOrSmell'),
+              },
+              {
+                value: 'newOrWorseCough',
+                label: t('questionary:symptoms.options.worseCough'),
+              },
+              {
+                value: 'runnyNose',
+                label: t('questionary:symptoms.options.runnyNose'),
+              },
+              {
+                value: 'breathShortness',
+                label: t('questionary:symptoms.options.breathShortness'),
+              },
+              {
+                value: 'soreThroat',
+                label: t('questionary:symptoms.options.soreThroat'),
+              },
+              {
+                value: 'chestTightness',
+                label: t('questionary:symptoms.options.chestTightness'),
+              },
+              {
+                value: 'vomitingAndDiarrhea',
+                label: t('questionary:symptoms.options.vomitingAndDiarrhea'),
+              },
+              {
+                value: 'weakness',
+                label: t('questionary:symptoms.options.weakness'),
+              },
+              {
+                value: 'other',
+                label: t('questionary:symptoms.options.other'),
               },
             ]}
+            excludableValues={['none']}
           />
         )}
       />
@@ -145,8 +207,8 @@ const Step2 = ({
         <Portal>
           <WizardButtons
             leftLabel={t('questionary:nextButton')}
-            leftHandler={handleSubmit(onSubmit)}
             leftDisabled={!isValid}
+            leftHandler={handleSubmit(onSubmit)}
             invert
           />
         </Portal>
@@ -155,4 +217,4 @@ const Step2 = ({
   );
 };
 
-export default React.memo(Step2);
+export default React.memo(Step7a);

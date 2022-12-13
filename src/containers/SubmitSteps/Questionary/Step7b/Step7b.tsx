@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import usePortal from 'react-useportal';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 // Form
 import { useForm, Controller } from 'react-hook-form';
@@ -20,26 +20,23 @@ import useHeaderContext from 'hooks/useHeaderContext';
 import { scrollToTop } from 'helper/scrollHelper';
 
 // Components
-import OptionList from 'components/OptionList';
 import WizardButtons from 'components/WizardButtons';
-import ProgressIndicator from 'components/ProgressIndicator';
 
 // Styles
 import {
-  QuestionText, MainContainer,
+  QuestionText, MainContainer, QuestionInput,
 } from '../style';
 
 const schema = Yup.object({
-  doses: Yup.string().required(),
+  symptomsStartedDate: Yup.string().required(),
 }).defined();
 
-type Step2Type = Yup.InferType<typeof schema>;
+type Step7bType = Yup.InferType<typeof schema>;
 
-const Step2 = ({
+const Step7b = ({
   previousStep,
   nextStep,
   storeKey,
-  metadata,
 }: Wizard.StepProps) => {
   // Hooks
   const { Portal } = usePortal({
@@ -52,6 +49,7 @@ const Step2 = ({
 
   // States
   const [activeStep, setActiveStep] = React.useState(true);
+
   // Form
   const {
     control, handleSubmit, formState,
@@ -62,6 +60,7 @@ const Step2 = ({
   });
   const { errors, isValid } = formState;
 
+  // Handlers
   const handleDoBack = React.useCallback(() => {
     setActiveStep(false);
     if (previousStep) {
@@ -71,15 +70,7 @@ const Step2 = ({
     }
   }, [history, previousStep]);
 
-  useEffect(() => {
-    scrollToTop();
-    setTitle(`${t('questionary:headerQuestions')}`);
-    setType('primary');
-    setDoGoBack(() => handleDoBack);
-  }, [handleDoBack, setDoGoBack, setTitle, setType, metadata, t]);
-
-  // Handlers
-  const onSubmit = async (values: Step2Type) => {
+  const onSubmit = async (values: Step7bType) => {
     if (values) {
       action(values);
       if (nextStep) {
@@ -89,53 +80,30 @@ const Step2 = ({
     }
   };
 
+  useEffect(() => {
+    scrollToTop();
+    setTitle(`${t('questionary:headerQuestions')}`);
+    setType('primary');
+    setDoGoBack(() => handleDoBack);
+  }, [handleDoBack, setDoGoBack, setTitle, setType, t]);
+
   return (
     <MainContainer>
-      <ProgressIndicator
-        currentStep={metadata?.current}
-        totalSteps={metadata?.total}
-        progressBar
-      />
       <QuestionText extraSpace first>
-        <Trans i18nKey="questionary:doses.question">
-          <strong>Which of the below symptoms do you currently have?</strong>
-        </Trans>
+        {t('questionary:symptomsDate')}
       </QuestionText>
       <Controller
         control={control}
-        name="doses"
-        defaultValue={undefined}
-        render={({ onChange, value }) => (
-          <OptionList
-            singleSelection
-            value={{ selected: value ? [value] : [] }}
-            onChange={v => onChange(v.selected[0])}
-            items={[
-              {
-                value: 'none',
-                label: t('questionary:doses.options.none'),
-              },
-              {
-                value: 'oneDoses',
-                label: t('questionary:doses.options.oneDoses'),
-              },
-              {
-                value: 'towDoses',
-                label: t('questionary:doses.options.twoDoses'),
-              },
-              {
-                value: 'threeDoses',
-                label: t('questionary:doses.options.threeDoses'),
-              },
-              {
-                value: 'fourOrMoreDoses',
-                label: t('questionary:doses.options.fourDoses'),
-              },
-              {
-                value: 'decline',
-                label: t('questionary:doses.options.decline'),
-              },
-            ]}
+        name="symptomsStartedDate"
+        defaultValue=""
+        render={({ onChange, value, name }) => (
+          <QuestionInput
+            name={name}
+            value={value}
+            onChange={onChange}
+            type="number"
+            placeholder={t('questionary:enterDays')}
+            autoComplete="Off"
           />
         )}
       />
@@ -155,4 +123,4 @@ const Step2 = ({
   );
 };
 
-export default React.memo(Step2);
+export default React.memo(Step7b);

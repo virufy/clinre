@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import usePortal from 'react-useportal';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 // Form
 import { useForm, Controller } from 'react-hook-form';
@@ -13,29 +13,29 @@ import * as Yup from 'yup';
 // Update Action
 import { updateAction } from 'utils/wizard';
 
+// Components
+import OptionList from 'components/OptionList';
+import WizardButtons from 'components/WizardButtons';
+import ProgressIndicator from 'components/ProgressIndicator';
+
 // Header Control
 import useHeaderContext from 'hooks/useHeaderContext';
 
 // Utils
 import { scrollToTop } from 'helper/scrollHelper';
 
-// Components
-import OptionList from 'components/OptionList';
-import WizardButtons from 'components/WizardButtons';
-import ProgressIndicator from 'components/ProgressIndicator';
-
 // Styles
 import {
-  QuestionText, MainContainer,
+  QuestionText, MainContainer, QuestionNote,
 } from '../style';
 
 const schema = Yup.object({
-  doses: Yup.string().required(),
+  gender: Yup.string().required(),
 }).defined();
 
-type Step2Type = Yup.InferType<typeof schema>;
+type Step4Type = Yup.InferType<typeof schema>;
 
-const Step2 = ({
+const Step4 = ({
   previousStep,
   nextStep,
   storeKey,
@@ -52,6 +52,7 @@ const Step2 = ({
 
   // States
   const [activeStep, setActiveStep] = React.useState(true);
+
   // Form
   const {
     control, handleSubmit, formState,
@@ -60,7 +61,11 @@ const Step2 = ({
     defaultValues: state?.[storeKey],
     resolver: yupResolver(schema),
   });
-  const { errors, isValid } = formState;
+  const { errors } = formState;
+
+  const {
+    isValid,
+  } = formState;
 
   const handleDoBack = React.useCallback(() => {
     setActiveStep(false);
@@ -79,7 +84,7 @@ const Step2 = ({
   }, [handleDoBack, setDoGoBack, setTitle, setType, metadata, t]);
 
   // Handlers
-  const onSubmit = async (values: Step2Type) => {
+  const onSubmit = async (values: Step4Type) => {
     if (values) {
       action(values);
       if (nextStep) {
@@ -96,15 +101,13 @@ const Step2 = ({
         totalSteps={metadata?.total}
         progressBar
       />
-      <QuestionText extraSpace first>
-        <Trans i18nKey="questionary:doses.question">
-          <strong>Which of the below symptoms do you currently have?</strong>
-        </Trans>
+      <QuestionText first>{t('questionary:gender.question')}
+        <QuestionNote>{t('questionary:gender.note')}</QuestionNote>
       </QuestionText>
       <Controller
         control={control}
-        name="doses"
-        defaultValue={undefined}
+        name="gender"
+        defaultValue=""
         render={({ onChange, value }) => (
           <OptionList
             singleSelection
@@ -112,28 +115,24 @@ const Step2 = ({
             onChange={v => onChange(v.selected[0])}
             items={[
               {
-                value: 'none',
-                label: t('questionary:doses.options.none'),
+                value: 'female',
+                label: t('questionary:gender.options.female'),
               },
               {
-                value: 'oneDoses',
-                label: t('questionary:doses.options.oneDoses'),
+                value: 'male',
+                label: t('questionary:gender.options.male'),
               },
               {
-                value: 'towDoses',
-                label: t('questionary:doses.options.twoDoses'),
+                value: 'transgender',
+                label: t('questionary:gender.options.transgender'),
               },
               {
-                value: 'threeDoses',
-                label: t('questionary:doses.options.threeDoses'),
+                value: 'other',
+                label: t('questionary:gender.options.other'),
               },
               {
-                value: 'fourOrMoreDoses',
-                label: t('questionary:doses.options.fourDoses'),
-              },
-              {
-                value: 'decline',
-                label: t('questionary:doses.options.decline'),
+                value: 'notToSay',
+                label: t('questionary:gender.options.notToSay'),
               },
             ]}
           />
@@ -155,4 +154,4 @@ const Step2 = ({
   );
 };
 
-export default React.memo(Step2);
+export default React.memo(Step4);

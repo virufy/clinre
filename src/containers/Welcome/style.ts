@@ -248,6 +248,7 @@ export const TextErrorContainer = styled.div`
   display: flex;
   padding-left: 20px;
   padding-right: 20px;
+  max-width: 470px;
 
   svg {
     margin-right: 5px;
@@ -334,6 +335,7 @@ export const InstructionContainer = styled.div`
   h2 {
     margin-top: 0;
     margin-bottom: 0;
+    padding-left: 0px;
   }
   
   @media screen and (${props => props.theme.breakpoints.tablet}) {
@@ -697,4 +699,21 @@ export const WelcomeSubtitleBold = styled(WelcomeSubtitle).attrs({
   as: 'span',
 })`
   font-weight: 700;
+`;
+
+export const ClinRe = styled.img.attrs({
+  width: 77,
+  height: 25,
+})`
+  margin-left: 10px;
+`;
+
+export const SupportedByContainer = styled.div<WelcomeSubtitleProps>`
+  color: ${({ theme, fontColor }) => (fontColor || theme.colors.purple)};
+  font-family: "Source Sans Pro";
+  ${({ fontSize = 14 }) => css`font-size: ${fontSize}px;`}
+  ${({ lineHeight }) => lineHeight && css`line-height: ${lineHeight}px;`}
+  font-weight: 600;
+  margin-top: 20px;
+  text-align: center;
 `;

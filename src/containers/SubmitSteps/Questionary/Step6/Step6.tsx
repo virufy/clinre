@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import usePortal from 'react-useportal';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 // Form
 import { useForm, Controller } from 'react-hook-form';
@@ -20,22 +20,22 @@ import useHeaderContext from 'hooks/useHeaderContext';
 import { scrollToTop } from 'helper/scrollHelper';
 
 // Components
-import OptionList from 'components/OptionList';
-import WizardButtons from 'components/WizardButtons';
 import ProgressIndicator from 'components/ProgressIndicator';
 
 // Styles
+import OptionList from 'components/OptionList';
+import WizardButtons from 'components/WizardButtons';
 import {
-  QuestionText, MainContainer,
+  QuestionText, QuestionNote, MainContainer,
 } from '../style';
 
 const schema = Yup.object({
-  doses: Yup.string().required(),
+  smokeLastSixMonths: Yup.string().required(),
 }).defined();
 
-type Step2Type = Yup.InferType<typeof schema>;
+type Step6Type = Yup.InferType<typeof schema>;
 
-const Step2 = ({
+const Step6 = ({
   previousStep,
   nextStep,
   storeKey,
@@ -52,6 +52,7 @@ const Step2 = ({
 
   // States
   const [activeStep, setActiveStep] = React.useState(true);
+
   // Form
   const {
     control, handleSubmit, formState,
@@ -60,7 +61,11 @@ const Step2 = ({
     defaultValues: state?.[storeKey],
     resolver: yupResolver(schema),
   });
-  const { errors, isValid } = formState;
+  const { errors } = formState;
+
+  const {
+    isValid,
+  } = formState;
 
   const handleDoBack = React.useCallback(() => {
     setActiveStep(false);
@@ -79,7 +84,7 @@ const Step2 = ({
   }, [handleDoBack, setDoGoBack, setTitle, setType, metadata, t]);
 
   // Handlers
-  const onSubmit = async (values: Step2Type) => {
+  const onSubmit = async (values: Step6Type) => {
     if (values) {
       action(values);
       if (nextStep) {
@@ -97,14 +102,13 @@ const Step2 = ({
         progressBar
       />
       <QuestionText extraSpace first>
-        <Trans i18nKey="questionary:doses.question">
-          <strong>Which of the below symptoms do you currently have?</strong>
-        </Trans>
+        {t('questionary:smokeLastSixMonths.question')}
+        <QuestionNote>{t('questionary:smokeLastSixMonths.note')}</QuestionNote>
       </QuestionText>
       <Controller
         control={control}
-        name="doses"
-        defaultValue={undefined}
+        name="smokeLastSixMonths"
+        defaultValue=""
         render={({ onChange, value }) => (
           <OptionList
             singleSelection
@@ -112,28 +116,12 @@ const Step2 = ({
             onChange={v => onChange(v.selected[0])}
             items={[
               {
-                value: 'none',
-                label: t('questionary:doses.options.none'),
+                value: 'true',
+                label: t('questionary:smokeLastSixMonths.options.yes'),
               },
               {
-                value: 'oneDoses',
-                label: t('questionary:doses.options.oneDoses'),
-              },
-              {
-                value: 'towDoses',
-                label: t('questionary:doses.options.twoDoses'),
-              },
-              {
-                value: 'threeDoses',
-                label: t('questionary:doses.options.threeDoses'),
-              },
-              {
-                value: 'fourOrMoreDoses',
-                label: t('questionary:doses.options.fourDoses'),
-              },
-              {
-                value: 'decline',
-                label: t('questionary:doses.options.decline'),
+                value: 'false',
+                label: t('questionary:smokeLastSixMonths.options.no'),
               },
             ]}
           />
@@ -155,4 +143,4 @@ const Step2 = ({
   );
 };
 
-export default React.memo(Step2);
+export default React.memo(Step6);
