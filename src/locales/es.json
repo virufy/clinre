@@ -244,6 +244,7 @@
     "bulletsIntro": "<strong>Introducción: </strong>Acerca de nosotros y recordatorios de seguridad",
     "bulletCough": "<strong>Toser en el teléfono</strong>",
     "bulletQuestions": "<strong>Preguntas rápidas de salud</strong>",
+    "startButton": "Comenzar",
     "nextButton": "Siguiente"
   },
   "consent": {

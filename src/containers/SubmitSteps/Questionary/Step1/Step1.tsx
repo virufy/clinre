@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import usePortal from 'react-useportal';
 import { useTranslation } from 'react-i18next';
 
@@ -58,13 +58,16 @@ const Step1 = ({
   const history = useHistory();
   const { t } = useTranslation();
   const { state, action } = useStateMachine(updateAction(storeKey));
+  const { search } = useLocation();
+
+  const params = React.useMemo(() => new URLSearchParams(search), [search]);
 
   // States
   const [activeStep, setActiveStep] = React.useState(true);
 
   // Form
   const {
-    control, handleSubmit, formState,
+    control, handleSubmit, formState, setValue,
   } = useForm({
     mode: 'onChange',
     defaultValues: state?.[storeKey],
@@ -81,6 +84,7 @@ const Step1 = ({
     }
   }, [history, previousStep]);
 
+  // Effects
   useEffect(() => {
     scrollToTop();
     setTitle(`${t('questionary:headerQuestions')}`);
@@ -88,6 +92,12 @@ const Step1 = ({
     setType('primary');
     setDoGoBack(() => handleDoBack);
   }, [handleDoBack, setDoGoBack, setTitle, setType, setSubtitle, t, metadata]);
+
+  useEffect(() => {
+    if (params.get('pcrresult') && params.get('pcrresult') !== (null || undefined)) {
+      setValue('pcrTestResult', params.get('pcrresult'));
+    }
+  }, [params, setValue]);
 
   // Handlers
   const onSubmit = async (values: Step1Type) => {
