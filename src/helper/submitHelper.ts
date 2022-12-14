@@ -139,9 +139,9 @@ export async function doSubmit({
       body.append('captchaValue', captchaValue);
     }
 
-    const response = await axiosClient.post('saveSurvey', body, {
+    const response = await axiosClient.post('saveClinre', body, {
       headers: {
-        'Content-Type': 'multipart/form-data; boundary=SaveSurvey',
+        'Content-Type': 'multipart/form-data; boundary=saveClinre',
       },
     });
 

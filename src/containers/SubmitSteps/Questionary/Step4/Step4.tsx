@@ -139,7 +139,7 @@ const Step4 = ({
         )}
       />
       {/* Bottom Buttons */}
-      <p><ErrorMessage errors={errors} name="name" /></p>
+      <ErrorMessage errors={errors} name="gender" as="p" />
       {activeStep && (
         <Portal>
           <WizardButtons

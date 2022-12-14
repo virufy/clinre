@@ -94,7 +94,7 @@ const Step1 = ({
   }, [handleDoBack, setDoGoBack, setTitle, setType, setSubtitle, t, metadata]);
 
   useEffect(() => {
-    if (params.get('pcrresult') && params.get('pcrresult') !== (null || undefined)) {
+    if (params.get('pcrresult')) {
       setValue('pcrTestResult', params.get('pcrresult'));
     }
   }, [params, setValue]);
@@ -167,7 +167,7 @@ const Step1 = ({
           />
         )}
       />
-      <p><ErrorMessage errors={errors} name="name" /></p>
+      <ErrorMessage errors={errors} name="pcrTestResult" as="p" />
       {activeStep && (
         <Portal>
           <WizardButtons

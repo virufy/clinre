@@ -61,8 +61,8 @@ export const WomanWithPhone = styled(WomanWithPhoneSvg)`
 export const QuestionAllApply = styled.span`
   color: ${props => props.theme.colors.mineShaft_50};
   font-family: "Source Sans Pro";
-  font-size: 12px;
-  line-height: 142.69%;
+  font-size: 0.75rem;
+  line-height: 1.42;
   font-weight: normal;
   margin-left: 5px;
   color: ${props => props.theme.colors.black};
@@ -79,8 +79,8 @@ export const QuestionText = styled.p<{extraSpace?: boolean; first?: boolean; has
 `;
 export const QuestionNote = styled.span`
   font-family: "Source Sans Pro";
-  font-size: 12px;
-  line-height: 142.69%;
+  font-size: 0.75rem;
+  line-height: 1.42;
   font-weight: normal;
   margin-bottom: 32px;
   color: ${props => props.theme.colors.black};

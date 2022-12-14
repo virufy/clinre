@@ -21,10 +21,10 @@ import { scrollToTop } from 'helper/scrollHelper';
 
 // Components
 import ProgressIndicator from 'components/ProgressIndicator';
-
-// Styles
 import OptionList from 'components/OptionList';
 import WizardButtons from 'components/WizardButtons';
+
+// Styles
 import {
   QuestionText, QuestionNote, MainContainer,
 } from '../style';
@@ -128,7 +128,7 @@ const Step6 = ({
         )}
       />
       {/* Bottom Buttons */}
-      <p><ErrorMessage errors={errors} name="name" /></p>
+      <ErrorMessage errors={errors} name="smokeLastSixMonths" as="p" />
       {activeStep && (
         <Portal>
           <WizardButtons

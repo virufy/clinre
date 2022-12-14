@@ -18,7 +18,7 @@ export const ThankYouTitle = styled.h1`
   font-family: "Open Sans";
   font-weight: bold;
   font-size: 30px;
-  line-height: 142.69%;
+  line-height: 1.42;
   text-align: left;
   color: ${props => props.theme.colors.darkBlack};
   margin-bottom: 18px;
@@ -41,7 +41,7 @@ export const SubmissionIdBox = styled.div`
 export const BeforeSubmitText = styled.p`
   font-family: 'Source Sans Pro';
   font-size: 14px;
-  line-height: 142.69%;
+  line-height: 1.42;
   margin-bottom: 2px;
   color: ${colors.darkBlack};
 `;

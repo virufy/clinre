@@ -16,6 +16,8 @@ import { updateAction } from 'utils/wizard';
 // Components
 import Recaptcha from 'components/Recaptcha';
 import ProgressIndicator from 'components/ProgressIndicator';
+import OptionList from 'components/OptionList';
+import WizardButtons from 'components/WizardButtons';
 
 // Hooks
 import useHeaderContext from 'hooks/useHeaderContext';
@@ -25,8 +27,6 @@ import { scrollToTop } from 'helper/scrollHelper';
 import { doSubmit } from 'helper/submitHelper';
 
 // Styles
-import OptionList from 'components/OptionList';
-import WizardButtons from 'components/WizardButtons';
 import {
   QuestionText, TempBeforeSubmitError, MainContainer,
   QuestionAllApply,
@@ -212,7 +212,7 @@ const Step8 = ({
         )}
       />
       {/* Bottom Buttons */}
-      <p><ErrorMessage errors={errors} name="name" /></p>
+      <ErrorMessage errors={errors} name="currentMedicalCondition" as="p" />
       {activeStep && (
         <Portal>
           { /* ReCaptcha  */}

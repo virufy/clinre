@@ -32,13 +32,13 @@ export const LabelValueContainer = styled.div`
 export const Label = styled.div`
   font-family: Source Sans Pro;
   font-size: 12px;
-  line-height: 142.69%;
+  line-height: 1.42;
   color: ${props => props.theme.colors.darkGray};
 `;
 
 export const Value = styled.div`
   font-family: Source Sans Pro;
   font-size: 14px;
-  line-height: 142.69%;
+  line-height: 1.42;
   color: ${props => props.theme.colors.darkBlack};
 `;

@@ -202,7 +202,7 @@ const Step7a = ({
         )}
       />
       {/* Bottom Buttons */}
-      <p><ErrorMessage errors={errors} name="name" /></p>
+      <ErrorMessage errors={errors} name="currentSymptoms" as="p" />
       {activeStep && (
         <Portal>
           <WizardButtons

@@ -6,7 +6,8 @@ export const mapOfConsentFiles = {
   },
   'United States': {
     consentLang: [
-      'default.html',
+      'en',
+      'es',
     ],
   },
 };

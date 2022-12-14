@@ -21,10 +21,10 @@ import { scrollToTop } from 'helper/scrollHelper';
 
 // Components
 import ProgressIndicator from 'components/ProgressIndicator';
-
-// Styles
 import OptionList from 'components/OptionList';
 import WizardButtons from 'components/WizardButtons';
+
+// Styles
 import {
   QuestionText, MainContainer, QuestionNote,
 } from '../style';
@@ -132,7 +132,7 @@ const Step5 = ({
         )}
       />
       {/* Bottom Buttons */}
-      <p><ErrorMessage errors={errors} name="name" /></p>
+      <ErrorMessage errors={errors} name="biologicalSex" as="p" />
       {activeStep && (
         <Portal>
           <WizardButtons

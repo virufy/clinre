@@ -98,7 +98,7 @@ const Step2 = ({
       />
       <QuestionText extraSpace first>
         <Trans i18nKey="questionary:doses.question">
-          <strong>Which of the below symptoms do you currently have?</strong>
+          <strong>How many doses of the COVID-19 vaccine have you received?</strong>
         </Trans>
       </QuestionText>
       <Controller
@@ -140,7 +140,7 @@ const Step2 = ({
         )}
       />
       {/* Bottom Buttons */}
-      <p><ErrorMessage errors={errors} name="name" /></p>
+      <ErrorMessage errors={errors} name="doses" as="p" />
       {activeStep && (
         <Portal>
           <WizardButtons
