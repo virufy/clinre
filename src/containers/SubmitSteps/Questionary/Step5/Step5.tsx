@@ -24,13 +24,17 @@ import ProgressIndicator from 'components/ProgressIndicator';
 import OptionList from 'components/OptionList';
 import WizardButtons from 'components/WizardButtons';
 
+// Icons
+import { ReactComponent as ExclamationSVG } from 'assets/icons/exclamationCircle.svg';
+
 // Styles
+import { TextErrorContainer } from 'containers/Welcome/style';
 import {
   QuestionText, MainContainer, QuestionNote,
 } from '../style';
 
 const schema = Yup.object({
-  biologicalSex: Yup.string().required(),
+  biologicalSex: Yup.string().required('biologicalSexRequired'),
 }).defined();
 
 type Step5Type = Yup.InferType<typeof schema>;
@@ -132,7 +136,16 @@ const Step5 = ({
         )}
       />
       {/* Bottom Buttons */}
-      <ErrorMessage errors={errors} name="biologicalSex" as="p" />
+      <ErrorMessage
+        errors={errors}
+        name="biologicalSex"
+        render={({ message }) => (
+          <TextErrorContainer>
+            <ExclamationSVG />
+            {t(`main:${message}`, 'Please select an option')}
+          </TextErrorContainer>
+        )}
+      />
       {activeStep && (
         <Portal>
           <WizardButtons

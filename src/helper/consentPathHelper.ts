@@ -10,10 +10,10 @@ export const buildConsentFilePath = (country:Country, lang:string) => {
   const indexOfLang = mapOfConsentFiles[country].consentLang.indexOf(`${lang}.html`);
 
   if (indexOfLang !== -1) {
-    return `${basePath}/${country}/${lang}/${mapOfConsentFiles[country].consentLang[indexOfLang]}`;
+    return `${basePath}/${country}/${mapOfConsentFiles[country].consentLang[indexOfLang]}`;
   }
 
   const indexOfDefaultDoc = mapOfConsentFiles[country as Country].consentLang.indexOf('default.html');
 
-  return `${basePath}/${country}/${lang}/${mapOfConsentFiles[country].consentLang[indexOfDefaultDoc]}`;
+  return `${basePath}/${country}/${mapOfConsentFiles[country].consentLang[indexOfDefaultDoc]}`;
 };

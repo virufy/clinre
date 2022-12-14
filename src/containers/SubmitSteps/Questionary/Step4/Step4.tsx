@@ -18,6 +18,9 @@ import OptionList from 'components/OptionList';
 import WizardButtons from 'components/WizardButtons';
 import ProgressIndicator from 'components/ProgressIndicator';
 
+// Icons
+import { ReactComponent as ExclamationSVG } from 'assets/icons/exclamationCircle.svg';
+
 // Header Control
 import useHeaderContext from 'hooks/useHeaderContext';
 
@@ -25,12 +28,13 @@ import useHeaderContext from 'hooks/useHeaderContext';
 import { scrollToTop } from 'helper/scrollHelper';
 
 // Styles
+import { TextErrorContainer } from 'containers/Welcome/style';
 import {
   QuestionText, MainContainer, QuestionNote,
 } from '../style';
 
 const schema = Yup.object({
-  gender: Yup.string().required(),
+  gender: Yup.string().required('genderRequired'),
 }).defined();
 
 type Step4Type = Yup.InferType<typeof schema>;
@@ -139,7 +143,16 @@ const Step4 = ({
         )}
       />
       {/* Bottom Buttons */}
-      <ErrorMessage errors={errors} name="gender" as="p" />
+      <ErrorMessage
+        errors={errors}
+        name="gender"
+        render={({ message }) => (
+          <TextErrorContainer>
+            <ExclamationSVG />
+            {t(`main:${message}`, 'Please select an option')}
+          </TextErrorContainer>
+        )}
+      />
       {activeStep && (
         <Portal>
           <WizardButtons

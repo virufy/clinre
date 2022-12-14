@@ -17,6 +17,11 @@ import { updateAction } from 'utils/wizard';
 import { TitleBlack } from 'components/Texts';
 import WizardButtons from 'components/WizardButtons';
 import ProgressIndicator from 'components/ProgressIndicator';
+import DatePicker from 'components/DatePicker';
+import OptionList from 'components/OptionList';
+
+// Icons
+import { ReactComponent as ExclamationSVG } from 'assets/icons/exclamationCircle.svg';
 
 // Header Control
 import useHeaderContext from 'hooks/useHeaderContext';
@@ -25,8 +30,7 @@ import useHeaderContext from 'hooks/useHeaderContext';
 import { scrollToTop } from 'helper/scrollHelper';
 
 // Styles
-import DatePicker from 'components/DatePicker';
-import OptionList from 'components/OptionList';
+import { TextErrorContainer } from 'containers/Welcome/style';
 import i18n from 'i18n';
 import {
   MainContainer,
@@ -37,7 +41,7 @@ import {
 
 const schema = Yup.object({
   pcrTestDate: Yup.date().required(),
-  pcrTestResult: Yup.string().required(),
+  pcrTestResult: Yup.string().required('pcrTestResultRequired'),
 }).defined();
 
 type Step1Type = Yup.InferType<typeof schema>;
@@ -167,7 +171,16 @@ const Step1 = ({
           />
         )}
       />
-      <ErrorMessage errors={errors} name="pcrTestResult" as="p" />
+      <ErrorMessage
+        errors={errors}
+        name="pcrTestResult"
+        render={({ message }) => (
+          <TextErrorContainer>
+            <ExclamationSVG />
+            {t(`main:${message}`, 'Please select an option')}
+          </TextErrorContainer>
+        )}
+      />
       {activeStep && (
         <Portal>
           <WizardButtons

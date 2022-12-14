@@ -36,6 +36,15 @@
     "enterAccessCode": "Ingresar código de acceso",
     "patientIdLength": "Numero de Identificación debe tener entre 6 y 10 digitos",
     "patientIdRequired": "Numero de Identificación es requerido",
+    "dosesRequired": "Por favor seleccione una opción",
+    "pcrTestResultRequired": "Por favor seleccione una opción",
+    "ethnicityRequired": "Por favor seleccione una opción",
+    "genderRequired": "Por favor seleccione una opción",
+    "biologicalSexRequired": "Por favor seleccione una opción",
+    "smokeLastSixMonthsSexRequired": "Por favor seleccione una opción",
+    "currentSymptomsRequired": "Por favor seleccione al menos una opción",
+    "symptomsStartedDateRequired": "Por favor ingrese los días",
+    "currentMedicalConditionRequired": "Por favor seleccione al menos una opción",
     "countries": {
       "Afghanistan": "Afganistán",
       "Albania": "Albania",
@@ -480,6 +489,7 @@
       }
     },
     "symptomsDate": "¿Cuántos días hace aproximadamente que comenzaron estos síntomas?",
+    "enterDays": "Ingrese los días",
     "options": {
       "today": "Hoy",
       "days": "Hace 1 a 3 días",

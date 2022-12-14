@@ -22,13 +22,17 @@ import { scrollToTop } from 'helper/scrollHelper';
 // Components
 import WizardButtons from 'components/WizardButtons';
 
+// Icons
+import { ReactComponent as ExclamationSVG } from 'assets/icons/exclamationCircle.svg';
+
 // Styles
+import { TextErrorContainer } from 'containers/Welcome/style';
 import {
   QuestionText, MainContainer, QuestionInput,
 } from '../style';
 
 const schema = Yup.object({
-  symptomsStartedDate: Yup.string().required(),
+  symptomsStartedDate: Yup.string().required('symptomsStartedDateRequired'),
 }).defined();
 
 type Step7bType = Yup.InferType<typeof schema>;
@@ -108,7 +112,16 @@ const Step7b = ({
         )}
       />
       {/* Bottom Buttons */}
-      <ErrorMessage errors={errors} name="symptomsStartedDate" as="p" />
+      <ErrorMessage
+        errors={errors}
+        name="symptomsStartedDate"
+        render={({ message }) => (
+          <TextErrorContainer>
+            <ExclamationSVG />
+            {t(`main:${message}`, 'Please enter the days')}
+          </TextErrorContainer>
+        )}
+      />
       {activeStep && (
         <Portal>
           <WizardButtons

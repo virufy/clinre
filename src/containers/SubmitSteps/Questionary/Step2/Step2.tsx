@@ -24,13 +24,17 @@ import OptionList from 'components/OptionList';
 import WizardButtons from 'components/WizardButtons';
 import ProgressIndicator from 'components/ProgressIndicator';
 
+// Icons
+import { ReactComponent as ExclamationSVG } from 'assets/icons/exclamationCircle.svg';
+
 // Styles
+import { TextErrorContainer } from 'containers/Welcome/style';
 import {
   QuestionText, MainContainer,
 } from '../style';
 
 const schema = Yup.object({
-  doses: Yup.string().required(),
+  doses: Yup.string().required('dosesRequired'),
 }).defined();
 
 type Step2Type = Yup.InferType<typeof schema>;
@@ -140,7 +144,16 @@ const Step2 = ({
         )}
       />
       {/* Bottom Buttons */}
-      <ErrorMessage errors={errors} name="doses" as="p" />
+      <ErrorMessage
+        errors={errors}
+        name="doses"
+        render={({ message }) => (
+          <TextErrorContainer>
+            <ExclamationSVG />
+            {t(`main:${message}`, 'Please select an option')}
+          </TextErrorContainer>
+        )}
+      />
       {activeStep && (
         <Portal>
           <WizardButtons

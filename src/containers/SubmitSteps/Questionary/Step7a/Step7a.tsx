@@ -24,13 +24,17 @@ import OptionList from 'components/OptionList';
 import WizardButtons from 'components/WizardButtons';
 import ProgressIndicator from 'components/ProgressIndicator';
 
+// Icons
+import { ReactComponent as ExclamationSVG } from 'assets/icons/exclamationCircle.svg';
+
 // Styles
+import { TextErrorContainer } from 'containers/Welcome/style';
 import {
   QuestionText, MainContainer, QuestionAllApply,
 } from '../style';
 
 const schema = Yup.object({
-  currentSymptoms: Yup.array().of(Yup.string().required()).required().default([])
+  currentSymptoms: Yup.array().of(Yup.string().required()).required('currentSymptomsRequired').default([])
     .test('SelecteOne', 'Select one', v => !(!!v && v.length > 1 && (v.includes('none')))),
 }).defined();
 
@@ -202,7 +206,16 @@ const Step7a = ({
         )}
       />
       {/* Bottom Buttons */}
-      <ErrorMessage errors={errors} name="currentSymptoms" as="p" />
+      <ErrorMessage
+        errors={errors}
+        name="currentSymptoms"
+        render={({ message }) => (
+          <TextErrorContainer>
+            <ExclamationSVG />
+            {t(`main:${message}`, 'Please select at least one option')}
+          </TextErrorContainer>
+        )}
+      />
       {activeStep && (
         <Portal>
           <WizardButtons

@@ -19,6 +19,9 @@ import ProgressIndicator from 'components/ProgressIndicator';
 import OptionList from 'components/OptionList';
 import WizardButtons from 'components/WizardButtons';
 
+// Icons
+import { ReactComponent as ExclamationSVG } from 'assets/icons/exclamationCircle.svg';
+
 // Hooks
 import useHeaderContext from 'hooks/useHeaderContext';
 
@@ -27,13 +30,14 @@ import { scrollToTop } from 'helper/scrollHelper';
 import { doSubmit } from 'helper/submitHelper';
 
 // Styles
+import { TextErrorContainer } from 'containers/Welcome/style';
 import {
   QuestionText, TempBeforeSubmitError, MainContainer,
   QuestionAllApply,
 } from '../style';
 
 const schema = Yup.object({
-  currentMedicalCondition: Yup.array().of(Yup.string().required()).required().default([])
+  currentMedicalCondition: Yup.array().of(Yup.string().required()).required('currentMedicalConditionRequired').default([])
     .test('SelecteOne', 'Select one', v => !(!!v && v.length > 1 && (v.includes('none')))),
 }).defined();
 
@@ -212,7 +216,16 @@ const Step8 = ({
         )}
       />
       {/* Bottom Buttons */}
-      <ErrorMessage errors={errors} name="currentMedicalCondition" as="p" />
+      <ErrorMessage
+        errors={errors}
+        name="currentMedicalCondition"
+        render={({ message }) => (
+          <TextErrorContainer>
+            <ExclamationSVG />
+            {t(`main:${message}`, 'Please select at least one option')}
+          </TextErrorContainer>
+        )}
+      />
       {activeStep && (
         <Portal>
           { /* ReCaptcha  */}

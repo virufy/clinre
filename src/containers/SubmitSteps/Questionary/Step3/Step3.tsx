@@ -24,13 +24,17 @@ import OptionList from 'components/OptionList';
 import WizardButtons from 'components/WizardButtons';
 import ProgressIndicator from 'components/ProgressIndicator';
 
+// Icons
+import { ReactComponent as ExclamationSVG } from 'assets/icons/exclamationCircle.svg';
+
 // Styles
+import { TextErrorContainer } from 'containers/Welcome/style';
 import {
   QuestionText, MainContainer, QuestionAllApply,
 } from '../style';
 
 const schema = Yup.object({
-  ethnicity: Yup.array().of(Yup.string().required()).required().default([])
+  ethnicity: Yup.array().of(Yup.string().required()).required('ethnicityRequired').default([])
     .test('SelecteOne', 'Select one', v => !(!!v && v.length > 1 && (v.includes('decline')))),
 }).defined();
 
@@ -148,7 +152,16 @@ const Step3 = ({
         )}
       />
       {/* Bottom Buttons */}
-      <ErrorMessage errors={errors} name="ethnicity" as="p" />
+      <ErrorMessage
+        errors={errors}
+        name="ethnicity"
+        render={({ message }) => (
+          <TextErrorContainer>
+            <ExclamationSVG />
+            {t(`main:${message}`, 'Please select an option')}
+          </TextErrorContainer>
+        )}
+      />
       {activeStep && (
         <Portal>
           <WizardButtons
