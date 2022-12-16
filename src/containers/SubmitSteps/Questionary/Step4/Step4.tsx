@@ -111,12 +111,12 @@ const Step4 = ({
       <Controller
         control={control}
         name="gender"
-        defaultValue={{ selected: [], other: '' }}
+        defaultValue={undefined}
         render={({ onChange, value }) => (
           <OptionList
             singleSelection
-            value={value}
-            onChange={v => onChange(v)}
+            value={{ selected: value ? [value] : [] }}
+            onChange={v => onChange(v.selected[0])}
             items={[
               {
                 value: 'female',

@@ -97,14 +97,12 @@ export async function doSubmit({
       body.append('doses', doses);
     }
 
-    const genderSelected = gender.other || gender.selected[0];
-
     if (ethnicity) {
       body.append('ethnicity', ethnicity);
     }
 
-    if (genderSelected) {
-      body.append('gender', genderSelected);
+    if (gender) {
+      body.append('gender', gender);
     }
 
     if (biologicalSex) {
