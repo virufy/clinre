@@ -153,6 +153,7 @@ const Step1 = (p: Wizard.StepProps) => {
     if (virufyWizard) {
       const parsedVirufyWizard = JSON.parse(virufyWizard);
       setValue('language', parsedVirufyWizard.welcome.language);
+      setValue('region', parsedVirufyWizard.welcome.region);
       if (localStorageCountry) {
         setSupportedLang(JSON.parse(localStorageCountry)?.supported);
       }

@@ -10,5 +10,5 @@ export function updateAction(storeKey: string): any {
 }
 
 export function resetStore(): any {
-  return (state: any) => ({ welcome: { language: state.welcome.language } });
+  return (state: any) => ({ welcome: { language: state.welcome.language, region: state.welcome.region } });
 }

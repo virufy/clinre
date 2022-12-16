@@ -115,16 +115,16 @@ export async function doSubmit({
       body.append('smokeLastSixMonths', smokeLastSixMonths);
     }
 
-    if (currentSymptoms?.selected?.length > 0) {
-      body.append('currentSymptoms', currentSymptoms.selected.join(','));
+    if (currentSymptoms?.length > 0) {
+      body.append('currentSymptoms', currentSymptoms.join(','));
     }
 
     if (symptomsStartedDate) {
       body.append('symptomsStartedDate', symptomsStartedDate);
     }
 
-    if (currentMedicalCondition?.selected?.length > 0) {
-      body.append('currentMedicalCondition', currentMedicalCondition.selected.join(','));
+    if (currentMedicalCondition?.length > 0) {
+      body.append('currentMedicalCondition', currentMedicalCondition.join(','));
     }
 
     if (currentSymptoms?.other) {
