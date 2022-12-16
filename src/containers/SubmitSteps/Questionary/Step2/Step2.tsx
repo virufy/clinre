@@ -124,7 +124,7 @@ const Step2 = ({
                 label: t('questionary:doses.options.oneDoses'),
               },
               {
-                value: 'towDoses',
+                value: 'twoDoses',
                 label: t('questionary:doses.options.twoDoses'),
               },
               {
