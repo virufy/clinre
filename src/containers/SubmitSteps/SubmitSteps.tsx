@@ -28,7 +28,7 @@ createStore({
     },
   },
 }, {
-  name: 'compensar-app-wizard',
+  name: 'clinre-wizard',
 });
 
 const SubmitSteps = () => {
