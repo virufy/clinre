@@ -18,7 +18,7 @@ const StoreKey = 'welcome';
 createStore({
   [StoreKey]: {},
 }, {
-  name: 'compensar-app-wizard',
+  name: 'clinre-wizard',
 });
 
 const stepsWithoutDots = getWelcomeStepsWithoutDots(StoreKey);
