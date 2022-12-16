@@ -115,9 +115,12 @@ const OptionList = ({
         );
       })}
       {allowAddOther && !showOtherInput && (
-      <OptionListAddOtherButton onClick={addOtherClickHandler} lastItem>
-        {addOtherLabel}
-      </OptionListAddOtherButton>
+        <OptionListAddOtherButton
+          onClick={addOtherClickHandler}
+          lastItem
+        >
+          {addOtherLabel}
+        </OptionListAddOtherButton>
       )}
       {showOtherInput && (
         <OptionListInputContainer>

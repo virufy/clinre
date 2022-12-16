@@ -8,14 +8,14 @@ import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers';
 import * as Yup from 'yup';
 
+// Assets
+import ClinReLogo from 'assets/images/clinRe.jpg';
+
 // Icons
 import { ReactComponent as ExclamationSVG } from 'assets/icons/exclamationCircle.svg';
 
 // Components
 import CreatedBy from 'components/CreatedBy';
-
-// Modals
-import CountryErrorModal from 'modals/CountryErrorModal';
 
 // Update Action
 import { updateAction, resetStore } from 'utils/wizard';
@@ -25,17 +25,30 @@ import useHeaderContext from 'hooks/useHeaderContext';
 
 // Data
 import { languageData } from 'data/lang';
-import { countryData, countriesWithStates, CountryDataProps } from 'data/country';
+import { countryData } from 'data/country';
 import { timeZones } from 'data/timeZones';
 
 // Helper
 import { scrollToTop } from 'helper/scrollHelper';
 
+// Utils
+import { currentCountry } from 'utils/currentCountry';
+
 // Styles
 import {
-  WelcomeContent, WelcomeStyledForm, LogoSubtitle,
-  RegionContainer, ContainerNextButton, NextButton, ArrowRightSVG,
-  BoldBlackText, CustomPurpleText, WelcomeSelect, TextErrorContainer,
+  WelcomeContent,
+  WelcomeStyledForm,
+  LogoSubtitle,
+  RegionContainer,
+  ContainerNextButton,
+  NextButton,
+  ArrowRightSVG,
+  BoldBlackText,
+  CustomPurpleText,
+  WelcomeSelect,
+  TextErrorContainer,
+  ClinRe,
+  SupportedByContainer,
 } from '../style';
 
 declare interface OptionsProps {
@@ -43,36 +56,12 @@ declare interface OptionsProps {
   value: string;
 }
 
-const invalidCountries = ['India', 'France', 'Italy', 'Netherlands', 'Belgium', 'Luxembourg', 'Germany', 'Pakistan'];
-
 const schema = Yup.object().shape({
-  country: Yup.string().required().notOneOf(invalidCountries),
   language: Yup.string().required(),
-  region: Yup.string().when('country', {
-    is: (val: string) => countriesWithStates.includes(val),
-    then: Yup.string().required('regionRequired'),
-    else: Yup.string(),
-  }),
-  patientId: Yup.string().when('$isClinical', {
-    is: true,
-    then: Yup.string().required(),
-    else: Yup.string().notRequired(),
-  }),
-  hospitalId: Yup.string().when('$isClinical', {
-    is: true,
-    then: Yup.string().required(),
-    else: Yup.string().notRequired(),
-  }),
+  region: Yup.string().required('regionRequired'),
 }).defined();
 
 type Step1Type = Yup.InferType<typeof schema>;
-
-const getCountry = async () => {
-  const res = await fetch('https://ipwho.is/');
-  const data = await res.json();
-
-  return data.country;
-};
 
 const getCountryInfo = (countryName: string) => {
   const countrySelected = countryData.find(country => country.label === countryName);
@@ -83,7 +72,6 @@ const getCountryInfo = (countryName: string) => {
 const Step1 = (p: Wizard.StepProps) => {
   const [activeStep, setActiveStep] = React.useState(true);
   const [supportedLang, setSupportedLang] = React.useState<{ value: string; label: string; }[]>([]);
-  const [ipLimit, setIpLimit] = React.useState(false);
 
   const {
     setType, setDoGoBack, setLogoSize,
@@ -127,10 +115,6 @@ const Step1 = (p: Wizard.StepProps) => {
     }
   };
 
-  const resetRegion = () => {
-    setValue('region', '');
-  };
-
   useEffect(() => {
     scrollToTop();
     // Hide back arrow in header if neccesary
@@ -142,23 +126,18 @@ const Step1 = (p: Wizard.StepProps) => {
   const { t, i18n } = useTranslation();
 
   const lang = watch('language');
-  const country = watch('country');
 
   useEffect(() => {
     i18n.changeLanguage(lang);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i18n, lang]);
 
-  const invalidCountryModal = React.useMemo(() => invalidCountries.includes(country),
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-    [country]);
-
   const regionSelectOptions = useMemo(() => {
     const output = [
       { label: t('main:selectRegion'), value: '' },
     ];
-    if (country) {
-      const elem = countryData.find(a => a.value === country);
+    if (currentCountry) {
+      const elem = countryData.find(a => a.value === currentCountry);
       if (elem) {
         elem.states.forEach(s => {
           output.push({ label: s, value: s });
@@ -166,72 +145,39 @@ const Step1 = (p: Wizard.StepProps) => {
       }
     }
     return output;
-  }, [t, country]);
-
-  const getOptionsCountry = () => {
-    const options = countryData;
-    const formattedOptions = options.reduce((acc: CountryDataProps[], current) => {
-      acc.push({ ...current, label: t(`main:countries.${current.value}`) });
-      return acc;
-    }, []);
-    return formattedOptions;
-  };
+  }, [t]);
 
   useEffect(() => {
     const localStorageCountry = localStorage.getItem('countryResult');
     const virufyWizard = localStorage.getItem('compensar-app-wizard');
     if (virufyWizard) {
       const parsedVirufyWizard = JSON.parse(virufyWizard);
-      setValue('country', parsedVirufyWizard.welcome.country);
       setValue('language', parsedVirufyWizard.welcome.language);
       if (localStorageCountry) {
         setSupportedLang(JSON.parse(localStorageCountry)?.supported);
       }
     } else if (localStorageCountry) {
       const parsedLocalStorageCountry = JSON.parse(localStorageCountry);
-      setValue('country', parsedLocalStorageCountry.country);
       setValue('language', parsedLocalStorageCountry.lang[0].value);
       setSupportedLang(parsedLocalStorageCountry.supported);
-    } else {
-      getCountry()
-        .then(countryName => {
-          const cInfo = getCountryInfo(countryName);
-          const countryDataLS = {
-            country: countryName,
-            lang: cInfo?.defaultLang,
-            supported: cInfo?.supportedLang,
-          };
-          localStorage.setItem('countryResult', JSON.stringify(countryDataLS));
-          setValue('country', countryName);
-          if (cInfo) {
-            setValue('language', cInfo.defaultLang[0].value);
-            setSupportedLang(cInfo.supportedLang);
-          }
-          setIpLimit(false);
-        })
-        .catch(error => {
-          console.error(error);
-          setIpLimit(true);
-        });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (ipLimit && Intl) {
+    if (Intl) {
       const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       const tzArr = userTimeZone.split('/');
       const userCity = tzArr[tzArr.length - 1];
       const userCountry = timeZones[userCity];
       const cInfo = getCountryInfo(userCountry);
-      setValue('country', userCountry);
       if (cInfo) {
         setValue('language', cInfo.defaultLang[0].value);
         setSupportedLang(cInfo.supportedLang);
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ipLimit]);
+  }, []);
 
   return (
     <>
@@ -243,6 +189,10 @@ const Step1 = (p: Wizard.StepProps) => {
           <CustomPurpleText mb={8}>
             {t('main:paragraph2', 'Covid-19 Cough Data Collection Study')}
           </CustomPurpleText>
+          <SupportedByContainer>
+            {t('main:supportedBy', 'Supported by')}
+            <ClinRe src={ClinReLogo} />
+          </SupportedByContainer>
           <BoldBlackText>
             {t('main:selectYourLanguage', 'Language')}
           </BoldBlackText>
@@ -261,37 +211,6 @@ const Step1 = (p: Wizard.StepProps) => {
                 className="custom-select"
                 classNamePrefix="custom-select"
                 isDisabled={supportedLang?.length <= 1}
-              />
-            )}
-          />
-
-          <BoldBlackText>
-            {t('main:selectLocation', 'Location')}
-          </BoldBlackText>
-
-          <Controller
-            control={control}
-            name="country"
-            defaultValue=""
-            render={({ onChange, value: valueController }) => (
-              <WelcomeSelect
-                placeholder={t('main:selectCountry', 'Select country')}
-                options={getOptionsCountry()}
-                onChange={(e: any) => {
-                  onChange(e?.value);
-                  resetRegion();
-                  const cInfo = getCountryInfo(e.value);
-                  if (cInfo) {
-                    setSupportedLang(cInfo.supportedLang);
-                    setValue('language', cInfo.defaultLang[0].value);
-                  }
-                }}
-                value={getOptionsCountry().filter(({ value }) => value === valueController)}
-                className="custom-select"
-                classNamePrefix="custom-select"
-                noOptionsMessage={({ inputValue }) => (
-                  !inputValue ? `${t('main:noOptionsError')}` : `${t('main:noValueError')}`
-                )}
               />
             )}
           />
@@ -318,7 +237,7 @@ const Step1 = (p: Wizard.StepProps) => {
                   {errors.region && (
                     <TextErrorContainer>
                       <ExclamationSVG />
-                      {t(errors.region.message, 'Please select a region')}
+                      {t(`main:${errors.region.message}`, 'Please select a region')}
                     </TextErrorContainer>
                   )}
                 </RegionContainer>
@@ -342,12 +261,6 @@ const Step1 = (p: Wizard.StepProps) => {
           }
         </WelcomeContent>
       </WelcomeStyledForm>
-      <CountryErrorModal
-        isOpen={invalidCountryModal}
-        modalTitle="Oops."
-      >
-        {t('main:errorCountry', 'We are unable to collect coughs from your region at this time. Check back with us soon!')}
-      </CountryErrorModal>
     </>
   );
 };

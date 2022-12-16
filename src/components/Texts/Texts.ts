@@ -39,7 +39,11 @@ export const TitleBlack = styled.div`
   color: ${colors.mineShaft};
   font-size: 1.5rem;
   margin-bottom: 20px;
-  text-align: center;
+  text-align: left;
+
+  @media screen and (${props => props.theme.breakpoints.tablet}){
+    text-align: center;
+  }
 `;
 
 export const BlackText = styled.h2`

@@ -15,10 +15,10 @@ interface FooterReportProblemsProps {
 }
 
 const FooterReportProblems = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const location = useLocation();
 
-  const lang = 'es';
+  const lang = i18n.language;
 
   if (location.pathname === '/welcome') return null;
 

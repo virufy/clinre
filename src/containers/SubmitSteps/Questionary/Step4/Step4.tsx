@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import usePortal from 'react-useportal';
 import { useTranslation } from 'react-i18next';
 
@@ -14,11 +14,9 @@ import * as Yup from 'yup';
 import { updateAction } from 'utils/wizard';
 
 // Components
-import { TitleBlack } from 'components/Texts';
+import OptionList from 'components/OptionList';
 import WizardButtons from 'components/WizardButtons';
 import ProgressIndicator from 'components/ProgressIndicator';
-import DatePicker from 'components/DatePicker';
-import OptionList from 'components/OptionList';
 
 // Icons
 import { ReactComponent as ExclamationSVG } from 'assets/icons/exclamationCircle.svg';
@@ -31,53 +29,47 @@ import { scrollToTop } from 'helper/scrollHelper';
 
 // Styles
 import { TextErrorContainer } from 'containers/Welcome/style';
-import i18n from 'i18n';
 import {
-  MainContainer,
-  QuestionNote,
-  QuestionText,
-  WomanWithPhone,
+  QuestionText, MainContainer, QuestionNote,
 } from '../style';
 
 const schema = Yup.object({
-  pcrTestDate: Yup.date().required(),
-  pcrTestResult: Yup.string().required('pcrTestResultRequired'),
+  gender: Yup.string().required('genderRequired'),
 }).defined();
 
-type Step1Type = Yup.InferType<typeof schema>;
+type Step4Type = Yup.InferType<typeof schema>;
 
-const Step1 = ({
+const Step4 = ({
   previousStep,
   nextStep,
-  metadata,
   storeKey,
+  metadata,
 }: Wizard.StepProps) => {
   // Hooks
   const { Portal } = usePortal({
     bindTo: document && document.getElementById('wizard-buttons') as HTMLDivElement,
   });
-  const {
-    setDoGoBack, setTitle, setSubtitle, setType,
-  } = useHeaderContext();
+  const { setDoGoBack, setTitle, setType } = useHeaderContext();
   const history = useHistory();
   const { t } = useTranslation();
   const { state, action } = useStateMachine(updateAction(storeKey));
-  const { search } = useLocation();
-
-  const params = React.useMemo(() => new URLSearchParams(search), [search]);
 
   // States
   const [activeStep, setActiveStep] = React.useState(true);
 
   // Form
   const {
-    control, handleSubmit, formState, setValue,
+    control, handleSubmit, formState,
   } = useForm({
     mode: 'onChange',
     defaultValues: state?.[storeKey],
     resolver: yupResolver(schema),
   });
-  const { errors, isValid } = formState;
+  const { errors } = formState;
+
+  const {
+    isValid,
+  } = formState;
 
   const handleDoBack = React.useCallback(() => {
     setActiveStep(false);
@@ -88,23 +80,15 @@ const Step1 = ({
     }
   }, [history, previousStep]);
 
-  // Effects
   useEffect(() => {
     scrollToTop();
     setTitle(`${t('questionary:headerQuestions')}`);
-    setSubtitle('');
     setType('primary');
     setDoGoBack(() => handleDoBack);
-  }, [handleDoBack, setDoGoBack, setTitle, setType, setSubtitle, t, metadata]);
-
-  useEffect(() => {
-    if (params.get('pcrresult')) {
-      setValue('pcrTestResult', params.get('pcrresult'));
-    }
-  }, [params, setValue]);
+  }, [handleDoBack, setDoGoBack, setTitle, setType, metadata, t]);
 
   // Handlers
-  const onSubmit = async (values: Step1Type) => {
+  const onSubmit = async (values: Step4Type) => {
     if (values) {
       action(values);
       if (nextStep) {
@@ -116,64 +100,52 @@ const Step1 = ({
 
   return (
     <MainContainer>
-      <TitleBlack>{t('questionary:title')}</TitleBlack>
-      <QuestionNote>{t('questionary:note')}</QuestionNote>
-      <WomanWithPhone />
       <ProgressIndicator
         currentStep={metadata?.current}
         totalSteps={metadata?.total}
         progressBar
       />
-      <QuestionText extraSpace first>{t('questionary:whenPcrTest')}
+      <QuestionText first>{t('questionary:gender.question')}
+        <QuestionNote>{t('questionary:gender.note')}</QuestionNote>
       </QuestionText>
       <Controller
         control={control}
-        name="pcrTestDate"
-        defaultValue={undefined}
-        render={({ onChange, value }) => (
-          <DatePicker
-            label="Date"
-            value={value ? new Date(value) : null}
-            locale={i18n.language}
-            onChange={onChange}
-          />
-        )}
-      />
-
-      <QuestionText extraSpace>
-        {t('questionary:resultPcrTest.question')}
-      </QuestionText>
-      <Controller
-        control={control}
-        name="pcrTestResult"
-        defaultValue={undefined}
+        name="gender"
+        defaultValue=""
         render={({ onChange, value }) => (
           <OptionList
             singleSelection
             value={{ selected: value ? [value] : [] }}
             onChange={v => onChange(v.selected[0])}
-            items={[{
-              value: 'positive',
-              label: t('questionary:resultPcrTest.options.positive'),
-            },
-            {
-              value: 'negative',
-              label: t('questionary:resultPcrTest.options.negative'),
-            },
-            {
-              value: 'pending',
-              label: t('questionary:resultPcrTest.options.pending'),
-            },
-            {
-              value: 'unsure',
-              label: t('questionary:resultPcrTest.options.unsure'),
-            }]}
+            items={[
+              {
+                value: 'female',
+                label: t('questionary:gender.options.female'),
+              },
+              {
+                value: 'male',
+                label: t('questionary:gender.options.male'),
+              },
+              {
+                value: 'transgender',
+                label: t('questionary:gender.options.transgender'),
+              },
+              {
+                value: 'other',
+                label: t('questionary:gender.options.other'),
+              },
+              {
+                value: 'notToSay',
+                label: t('questionary:gender.options.notToSay'),
+              },
+            ]}
           />
         )}
       />
+      {/* Bottom Buttons */}
       <ErrorMessage
         errors={errors}
-        name="pcrTestResult"
+        name="gender"
         render={({ message }) => (
           <TextErrorContainer>
             <ExclamationSVG />
@@ -195,4 +167,4 @@ const Step1 = ({
   );
 };
 
-export default React.memo(Step1);
+export default React.memo(Step4);

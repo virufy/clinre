@@ -76,7 +76,7 @@ export const Title = styled.h1`
   font-family: "Open Sans";
   font-weight: bold;
   font-size: 30px;
-  line-height: 142.69%;
+  line-height: 1.42;
   text-align: center;
   color: ${props => props.theme.colors.darkBlack};
   margin-bottom: 8px;
@@ -87,7 +87,7 @@ export const ResultTitle = styled.h2<{ color?: string}>`
   font-family: "Open Sans";
   font-weight: bold;
   font-size: 22px;
-  line-height: 142.69%;
+  line-height: 1.42;
   text-align: center;
   color: ${({ color }) => color};
   margin-bottom: 8px;

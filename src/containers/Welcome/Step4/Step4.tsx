@@ -48,6 +48,8 @@ const schema = Yup.object().shape({
   agreedConsentTerms: Yup.boolean().required().default(false).oneOf([true]),
   agreedPolicyTerms: Yup.boolean().required().default(false).oneOf([true]),
   agreedCovidCollection: Yup.boolean().required().default(false).oneOf([true]),
+  agreedTrainingArtificial: Yup.boolean().required().default(false).oneOf([true]),
+  agreedBiometric: Yup.boolean().required().default(false).oneOf([true]),
 });
 
 type Step3Type = Yup.InferType<typeof schema>;
@@ -171,6 +173,48 @@ const Step4 = (p: Wizard.StepProps) => {
                 </Trans>
               )}
               name="agreedPolicyTerms"
+              onChange={e => onChange(e.target.checked)}
+              value={value}
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="agreedBiometric"
+          defaultValue={false}
+          render={({ onChange, value, name }) => (
+            <Checkbox
+              id="Step2-Biometric"
+              label={(
+                <Trans i18nKey="consent:biometric">
+                  I hereby expressly consent to the sharing of my personal information, biometric information,
+                  and health information with third parties as described in this Consent Form and/or the Virufy
+                  Privacy Policy.
+                </Trans>
+                )}
+              name={name}
+              onChange={e => onChange(e.target.checked)}
+              value={value}
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="agreedTrainingArtificial"
+          defaultValue={false}
+          render={({ onChange, value, name }) => (
+            <Checkbox
+              id="Step2-TrainingArtificial"
+              label={(
+                <Trans i18nKey="consent:signs">
+                  I hereby acknowledge and agree that processing shall be done for the purposes indicated above
+                  and, in particular but without limitation, for training artificial intelligence algorithms to
+                  analyze cough audio recordings to better determine signs of COVID-19.
+                </Trans>
+                )}
+              name={name}
               onChange={e => onChange(e.target.checked)}
               value={value}
             />

@@ -3,6 +3,9 @@ import * as H from 'history';
 // Hooks
 import { client as axiosClient } from 'hooks/useAxios';
 
+//
+import deviceDetect from 'helper/deviceHelper';
+
 interface DoSubmitProps {
   setSubmitError(err: string | null): void;
   state: CommonJSON;
@@ -25,7 +28,9 @@ export async function doSubmit({
   try {
     setSubmitError(null);
     const {
-      patientId,
+      language,
+      region,
+
       agreedConsentTerms,
       agreedPolicyTerms,
       agreedCovidDetection,
@@ -36,15 +41,30 @@ export async function doSubmit({
 
     const {
       recordYourCough,
+      recordYourBreath,
+      recordYourSpeech,
+
+      pcrTestDate,
+      pcrTestResult,
+
+      doses,
+      gender,
+      ethnicity,
+      biologicalSex,
+
+      smokeLastSixMonths,
       currentSymptoms,
       symptomsStartedDate,
+      currentMedicalCondition,
 
     } = state['submit-steps'];
 
     const body = new FormData();
 
-    if (patientId) {
-      body.append('patientId', patientId);
+    body.append('device', JSON.stringify(deviceDetect()));
+    body.append('language', language);
+    if (region) {
+      body.append('region', region);
     }
 
     if (window.sourceCampaign) {
@@ -60,6 +80,40 @@ export async function doSubmit({
 
     const coughFile = recordYourCough.recordingFile || recordYourCough.uploadedFile;
     body.append('cough', coughFile, coughFile.name || 'filename.wav');
+    const breathFile = recordYourBreath.recordingFile || recordYourBreath.uploadedFile;
+    body.append('breath', breathFile, breathFile.name || 'filename_breath.wav');
+    const voiceFile = recordYourSpeech.recordingFile || recordYourSpeech.uploadedFile;
+    body.append('voice', voiceFile, voiceFile.name || 'filename_voice.wav');
+
+    if (pcrTestDate) {
+      body.append('pcrTestDate', pcrTestDate.toISOString());
+    }
+
+    if (pcrTestResult) {
+      body.append('pcrTestResult', pcrTestResult);
+    }
+
+    if (doses) {
+      body.append('doses', doses);
+    }
+
+    const genderSelected = gender.other || gender.selected[0];
+
+    if (ethnicity) {
+      body.append('ethnicity', ethnicity);
+    }
+
+    if (genderSelected) {
+      body.append('gender', genderSelected);
+    }
+
+    if (biologicalSex) {
+      body.append('biologicalSex', biologicalSex);
+    }
+
+    if (smokeLastSixMonths) {
+      body.append('smokeLastSixMonths', smokeLastSixMonths);
+    }
 
     if (currentSymptoms?.selected?.length > 0) {
       body.append('currentSymptoms', currentSymptoms.selected.join(','));
@@ -69,17 +123,25 @@ export async function doSubmit({
       body.append('symptomsStartedDate', symptomsStartedDate);
     }
 
+    if (currentMedicalCondition?.selected?.length > 0) {
+      body.append('currentMedicalCondition', currentMedicalCondition.selected.join(','));
+    }
+
     if (currentSymptoms?.other) {
       body.append('otherSymptoms', currentSymptoms?.other);
+    }
+
+    if (currentMedicalCondition?.other) {
+      body.append('otherMedicalConditions', currentMedicalCondition?.other);
     }
 
     if (captchaValue) {
       body.append('captchaValue', captchaValue);
     }
 
-    const response = await axiosClient.post('saveCompensarInfo', body, {
+    const response = await axiosClient.post('saveClinre', body, {
       headers: {
-        'Content-Type': 'multipart/form-data; boundary=saveCompensarInfo',
+        'Content-Type': 'multipart/form-data; boundary=saveClinre',
       },
     });
 

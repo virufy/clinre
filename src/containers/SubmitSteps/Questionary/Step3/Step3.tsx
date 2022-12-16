@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import usePortal from 'react-useportal';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 
 // Form
 import { useForm, Controller } from 'react-hook-form';
@@ -13,34 +13,32 @@ import * as Yup from 'yup';
 // Update Action
 import { updateAction } from 'utils/wizard';
 
-// Components
-import WizardButtons from 'components/WizardButtons';
-import ProgressIndicator from 'components/ProgressIndicator';
-import OptionList from 'components/OptionList';
-import Recaptcha from 'components/Recaptcha';
-
 // Header Control
 import useHeaderContext from 'hooks/useHeaderContext';
 
 // Utils
 import { scrollToTop } from 'helper/scrollHelper';
-import { doSubmit } from 'helper/submitHelper';
-import { executeValidation } from 'helper/validationHelper';
+
+// Components
+import OptionList from 'components/OptionList';
+import WizardButtons from 'components/WizardButtons';
+import ProgressIndicator from 'components/ProgressIndicator';
+
+// Icons
+import { ReactComponent as ExclamationSVG } from 'assets/icons/exclamationCircle.svg';
 
 // Styles
+import { TextErrorContainer } from 'containers/Welcome/style';
 import {
-  QuestionText, MainContainer, TempBeforeSubmitError,
+  QuestionText, MainContainer, QuestionAllApply,
 } from '../style';
 
-const stepSchema = Yup.object({
-  symptomsStartedDate: Yup.string().when('currentSymptoms', {
-    is: val => executeValidation(val), // val should be { selected: ... },
-    then: (schema: any) => schema.required(), // o Yup.string().required(),
-    otherwise: (schema: any) => schema, // o Yup.string()
-  }),
+const schema = Yup.object({
+  ethnicity: Yup.array().of(Yup.string().required()).required('ethnicityRequired').default([])
+    .test('SelecteOne', 'Select one', v => !(!!v && v.length > 1 && (v.includes('decline')))),
 }).defined();
 
-type Step3Type = Yup.InferType<typeof stepSchema>;
+type Step3Type = Yup.InferType<typeof schema>;
 
 const Step3 = ({
   previousStep,
@@ -62,46 +60,13 @@ const Step3 = ({
 
   // Form
   const {
-    control, handleSubmit, formState, watch,
+    control, handleSubmit, formState,
   } = useForm({
     mode: 'onChange',
     defaultValues: state?.[storeKey],
-    resolver: yupResolver(stepSchema),
+    resolver: yupResolver(schema),
   });
   const { errors, isValid } = formState;
-  const watchSymptoms = watch('currentSymptoms');
-
-  /* Delete after Contact info step is re-integrated */
-  const [submitError, setSubmitError] = React.useState<string | null>(null);
-  const [captchaValue, setCaptchaValue] = React.useState<string | null>(null);
-  const [recaptchaAvailable, setRecaptchaAvailable] = React.useState(true);
-  const { isSubmitting } = formState;
-
-  useEffect(() => {
-    if (!captchaValue) {
-      setSubmitError(null);
-    }
-  }, [captchaValue]);
-
-  const onSubmit = async (values: Step3Type) => {
-    if (values) {
-      await doSubmit({
-        setSubmitError: s => setSubmitError(!s ? null : t(s)),
-        state: {
-          ...state,
-          'submit-steps': {
-            ...state['submit-steps'],
-            ...values,
-          },
-        },
-        captchaValue,
-        action,
-        nextStep,
-        setActiveStep,
-        history,
-      });
-    }
-  };
 
   const handleDoBack = React.useCallback(() => {
     setActiveStep(false);
@@ -114,12 +79,21 @@ const Step3 = ({
 
   useEffect(() => {
     scrollToTop();
-    setTitle(t('questionary:headerQuestions'));
+    setTitle(`${t('questionary:headerQuestions')}`);
     setType('primary');
     setDoGoBack(() => handleDoBack);
-  }, [handleDoBack, setDoGoBack, setTitle, setType, t]);
+  }, [handleDoBack, setDoGoBack, setTitle, setType, metadata, t]);
 
-  const covidSymptom = React.useMemo(() => executeValidation(watchSymptoms), [watchSymptoms]);
+  // Handlers
+  const onSubmit = async (values: Step3Type) => {
+    if (values) {
+      action(values);
+      if (nextStep) {
+        setActiveStep(false);
+        history.push(nextStep);
+      }
+    }
+  };
 
   return (
     <MainContainer>
@@ -128,61 +102,73 @@ const Step3 = ({
         totalSteps={metadata?.total}
         progressBar
       />
-      {
-        covidSymptom && (
-          <>
-            <QuestionText extraSpace first>
-              {t('questionary:symptomsDate')}
-            </QuestionText>
-            <Controller
-              control={control}
-              name="symptomsStartedDate"
-              defaultValue=""
-              render={({ onChange, value }) => (
-                <OptionList
-                  singleSelection
-                  value={{ selected: value ? [value] : [] }}
-                  onChange={v => onChange(v.selected[0])}
-                  items={[
-                    {
-                      value: 'today',
-                      label: t('questionary:options.today'),
-                    },
-                    {
-                      value: 'days',
-                      label: t('questionary:options.days'),
-                    },
-                    {
-                      value: 'week',
-                      label: t('questionary:options.week'),
-                    },
-                    {
-                      value: 'overWeek',
-                      label: t('questionary:options.overWeek'),
-                    },
-                  ]}
-                />
-              )}
-            />
-          </>
-        )
-      }
+      <QuestionText extraSpace first>
+        <Trans i18nKey="questionary:ethnicity.question">
+          <strong>Which of the below symptoms do you currently have?</strong>
+        </Trans>
+        <QuestionAllApply>{t('questionary:ethnicity.note')}</QuestionAllApply>
+      </QuestionText>
+      <Controller
+        control={control}
+        name="ethnicity"
+        defaultValue={[]}
+        render={({ onChange, value }) => (
+          <OptionList
+            isCheckbox
+            value={{ selected: value }}
+            onChange={v => onChange(v.selected)}
+            items={[
+              {
+                value: 'asian',
+                label: t('questionary:ethnicity.options.asian'),
+              },
+              {
+                value: 'nativeAmericanOrArab',
+                label: t('questionary:ethnicity.options.nativeAmericanOrArab'),
+              },
+              {
+                value: 'blackOrAfrican',
+                label: t('questionary:ethnicity.options.blackOrAfrican'),
+              },
+              {
+                value: 'hispanicOrLatin',
+                label: t('questionary:ethnicity.options.hispanicOrLatin'),
+              },
+              {
+                value: 'nativeHawaiianOrPacific',
+                label: t('questionary:ethnicity.options.nativeHawaiianOrPacific'),
+              },
+              {
+                value: 'white',
+                label: t('questionary:ethnicity.options.white'),
+              },
+              {
+                value: 'decline',
+                label: t('questionary:ethnicity.options.decline'),
+              },
+            ]}
+            excludableValues={['decline']}
+          />
+        )}
+      />
       {/* Bottom Buttons */}
-      <p><ErrorMessage errors={errors} name="name" /></p>
+      <ErrorMessage
+        errors={errors}
+        name="ethnicity"
+        render={({ message }) => (
+          <TextErrorContainer>
+            <ExclamationSVG />
+            {t(`main:${message}`, 'Please select an option')}
+          </TextErrorContainer>
+        )}
+      />
       {activeStep && (
         <Portal>
-          { /* ReCaptcha  */}
-          <Recaptcha onChange={setCaptchaValue} setRecaptchaAvailable={setRecaptchaAvailable} />
-          {submitError && (
-            <TempBeforeSubmitError>
-              {submitError}
-            </TempBeforeSubmitError>
-          )}
           <WizardButtons
-            invert
-            leftLabel={isSubmitting ? t('questionary:submitting') : t('beforeSubmit:submitButton')}
-            leftDisabled={(isSubmitting || (recaptchaAvailable && !captchaValue) || !isValid)}
+            leftLabel={t('questionary:nextButton')}
             leftHandler={handleSubmit(onSubmit)}
+            leftDisabled={!isValid}
+            invert
           />
         </Portal>
       )}
