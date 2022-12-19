@@ -102,9 +102,6 @@ const ListenAudio = ({
     const fnPlaying = () => {
       stepTimer(refProgress.current);
       setPlaying(true);
-      // setTimeout(() => {
-      // }, 100);
-      // setPlaying(false);
     };
 
     const fnPause = (e: any) => {
