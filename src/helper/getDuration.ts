@@ -9,10 +9,11 @@ export function getDuration(e: HTMLAudioElement): Promise<number> {
       return;
     }
     e.addEventListener('durationchange', () => {
-      e.remove();
+      e.pause();
+      e.volume = 1;
+      e.currentTime = 0;
       resolver(e.duration);
     });
     e.currentTime = 24 * 60 * 60; // Unprobable time
-    e.play();
   });
 }
