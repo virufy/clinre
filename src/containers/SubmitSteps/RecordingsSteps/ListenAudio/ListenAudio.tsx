@@ -170,6 +170,11 @@ const ListenAudio = ({
   }, [history, nextStep]);
 
   const handleDoBack = React.useCallback(() => {
+    if (playing) {
+      if (refAudio.current) {
+        refAudio.current.pause();
+      }
+    }
     setActiveStep(false);
     if (location.state && location.state.from) {
       if (isCoughLogic) {
@@ -184,7 +189,7 @@ const ListenAudio = ({
     } else {
       history.goBack();
     }
-  }, [location.state, previousStep, history, isCoughLogic, isBreathLogic, isShortAudioCollection]);
+  }, [location.state, previousStep, history, isCoughLogic, isBreathLogic, isShortAudioCollection, playing]);
 
   const handleRemoveFile = React.useCallback(() => {
     if (playing) {
@@ -200,8 +205,9 @@ const ListenAudio = ({
           uploadFile: null,
         },
       });
-      handleDoBack();
     }
+    setActiveStep(false);
+    handleDoBack();
   }, [playing, state, storeKey, metadata, action, handleDoBack]);
 
   const handlePlay = React.useCallback(() => {
