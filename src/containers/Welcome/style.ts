@@ -464,8 +464,11 @@ export const CheckboxTitle = styled.div`
 
 export const WelcomeConsentForm = styled.div`
   margin: 10px auto 20px auto;
-  padding-left: 20px;
-  padding-right: 20px;
+  background: #eee;
+  padding: 20px;
+  max-height: 300px;
+  overflow-y: scroll;
+  border: solid 1px black;
 
   .WordSection1 > p,
   .Section1 > p {

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react'; // Added useRef
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useStateMachine } from 'little-state-machine';
@@ -65,7 +65,6 @@ type Step1Type = Yup.InferType<typeof schema>;
 
 const getCountryInfo = (countryName: string) => {
   const countrySelected = countryData.find(country => country.label === countryName);
-
   return countrySelected;
 };
 
@@ -73,10 +72,8 @@ const Step1 = (p: Wizard.StepProps) => {
   const [activeStep, setActiveStep] = React.useState(true);
   const [supportedLang, setSupportedLang] = React.useState<{ value: string; label: string; }[]>([]);
 
-  const {
-    setType, setDoGoBack, setLogoSize,
-  } = useHeaderContext();
-  const resetExecuted = React.useRef(false);
+  const { setType, setDoGoBack, setLogoSize } = useHeaderContext();
+  const resetExecuted = useRef(false);
 
   const { state, actions } = useStateMachine({ update: updateAction(p.storeKey), reset: resetStore() });
 
@@ -98,6 +95,9 @@ const Step1 = (p: Wizard.StepProps) => {
   const history = useHistory();
   const { isValid, errors } = formState;
 
+  // Use a ref to track if language has been set from localStorage or user input
+  const languageSetRef = useRef(false);
+
   useEffect(() => {
     if (resetExecuted.current) {
       resetExecuted.current = false;
@@ -117,19 +117,16 @@ const Step1 = (p: Wizard.StepProps) => {
 
   useEffect(() => {
     scrollToTop();
-    // Hide back arrow in header if neccesary
     setDoGoBack(null);
     setType('tertiary');
     setLogoSize('big');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  const { t, i18n } = useTranslation();
+  }, [setDoGoBack, setLogoSize, setType]);
 
+  const { t, i18n } = useTranslation();
   const lang = watch('language');
 
   useEffect(() => {
     i18n.changeLanguage(lang);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i18n, lang]);
 
   const regionSelectOptions = useMemo(() => {
@@ -147,38 +144,75 @@ const Step1 = (p: Wizard.StepProps) => {
     return output;
   }, [t]);
 
+  // Combined useEffect for language initialization
   useEffect(() => {
     const localStorageCountry = localStorage.getItem('countryResult');
     const virufyWizard = localStorage.getItem('clinre-wizard');
+
+    // Define the ONLY allowed fallback languages
+    const allowedLanguages = [
+      { value: 'en', label: 'English' },
+      { value: 'es', label: 'Español' },
+    ];
+
+    let languageSetByLocalStorageOrTimezone = false;
+
+    // 1. Try to load from clinre-wizard (highest priority)
     if (virufyWizard) {
       const parsedVirufyWizard = JSON.parse(virufyWizard);
       setValue('language', parsedVirufyWizard.welcome.language);
       setValue('region', parsedVirufyWizard.welcome.region);
+      languageSetByLocalStorageOrTimezone = true;
       if (localStorageCountry) {
-        setSupportedLang(JSON.parse(localStorageCountry)?.supported);
+        // Filter the languages from localStorage to only include allowed ones
+        const parsedSupported = JSON.parse(localStorageCountry)?.supported;
+        setSupportedLang(parsedSupported.filter((lang: { value: string; }) => allowedLanguages.some(allowed => allowed.value === lang.value)));
+      } else {
+        // If clinre-wizard but no countryResult, use strictly allowed languages
+        setSupportedLang(allowedLanguages);
       }
-    } else if (localStorageCountry) {
+      return;
+    }
+
+    // 2. Try to load from countryResult in localStorage
+    if (localStorageCountry) {
       const parsedLocalStorageCountry = JSON.parse(localStorageCountry);
       setValue('language', parsedLocalStorageCountry.lang[0].value);
-      setSupportedLang(parsedLocalStorageCountry.supported);
+      // Filter the languages from localStorage to only include allowed ones
+      setSupportedLang(parsedLocalStorageCountry.supported.filter((lang: { value: string; }) => allowedLanguages.some(allowed => allowed.value === lang.value)));
+      languageSetByLocalStorageOrTimezone = true;
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
-  useEffect(() => {
-    if (Intl) {
+    // 3. Fallback to time zone detection if language not set by localStorage
+    if (Intl && !languageSetByLocalStorageOrTimezone) {
       const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       const tzArr = userTimeZone.split('/');
       const userCity = tzArr[tzArr.length - 1];
       const userCountry = timeZones[userCity];
       const cInfo = getCountryInfo(userCountry);
+
       if (cInfo) {
-        setValue('language', cInfo.defaultLang[0].value);
-        setSupportedLang(cInfo.supportedLang);
+        // Set language to English or Spanish if detected language is not one of them
+        const detectedLangValue = cInfo.defaultLang[0].value;
+        const defaultLangForRegion = allowedLanguages.find(lang => lang.value === detectedLangValue)
+          ? detectedLangValue
+          : allowedLanguages[0].value; // Default to English if detected isn't allowed
+
+        setValue('language', defaultLangForRegion);
+
+        // ALWAYS filter supportedLang to ONLY English and Spanish, regardless of cInfo
+        setSupportedLang(allowedLanguages);
+        languageSetByLocalStorageOrTimezone = true;
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
+    // Final fallback: Always default to English and set supportedLang to English/Spanish only
+    if (!languageSetByLocalStorageOrTimezone) {
+      setValue('language', allowedLanguages[0].value); // Default to English
+      setSupportedLang(allowedLanguages); // Always English and Spanish
+    }
+  }, [setValue]); // Add setValue to dependencies
 
   return (
     <>
@@ -198,20 +232,19 @@ const Step1 = (p: Wizard.StepProps) => {
             {t('main:selectYourLanguage', 'Language')}
           </BoldBlackText>
 
-          {/* Language */}
           <Controller
             control={control}
             name="language"
             defaultValue={languageData[0].value}
-            render={({ onChange, value: valueController }) => (
+            render={({ onChange, value }) => ( // Correct for RHF v6
               <WelcomeSelect
                 placeholder={t('main.selectYourLanguage', 'Language')}
-                options={supportedLang}
+                options={supportedLang.length > 0 ? supportedLang : languageData}
                 onChange={(e: any) => { onChange(e?.value); }}
-                value={languageData.filter(({ value }) => value === valueController)}
+                value={supportedLang.length > 0 ? supportedLang.filter(({ value: optValue }) => optValue === value) : languageData.filter(({ value: optValue }) => optValue === value)} // Use 'value' from RHF Controller
                 className="custom-select"
                 classNamePrefix="custom-select"
-                isDisabled={supportedLang?.length <= 1}
+                isDisabled={false}
               />
             )}
           />
@@ -220,30 +253,32 @@ const Step1 = (p: Wizard.StepProps) => {
             control={control}
             name="region"
             defaultValue=""
-            render={({ onChange, value: valueController }) => (regionSelectOptions.length > 1 ? (
-              <>
-                <BoldBlackText>
-                  {t('main:region', 'Region')}
-                </BoldBlackText>
+            render={({ onChange, value }) => ( // Correct for RHF v6
+              regionSelectOptions.length > 1 ? (
+                <>
+                  <BoldBlackText>
+                    {t('main:region', 'Region')}
+                  </BoldBlackText>
 
-                <RegionContainer>
-                  <WelcomeSelect
-                    options={regionSelectOptions}
-                    onChange={(e: any) => { onChange(e?.value); }}
-                    value={regionSelectOptions.filter(({ value }) => value === valueController) || ''}
-                    className="custom-select"
-                    classNamePrefix="custom-select"
-                    error={errors.region}
-                  />
-                  {errors.region && (
-                    <TextErrorContainer>
-                      <ExclamationSVG />
-                      {t(`main:${errors.region.message}`, 'Please select a region')}
-                    </TextErrorContainer>
-                  )}
-                </RegionContainer>
-              </>
-            ) : <></>)}
+                  <RegionContainer>
+                    <WelcomeSelect
+                      options={regionSelectOptions}
+                      onChange={(e: any) => { onChange(e?.value); }}
+                      value={regionSelectOptions.filter(({ value: optValue }) => optValue === value) || ''} // Use 'value' from RHF Controller
+                      className="custom-select"
+                      classNamePrefix="custom-select"
+                      error={errors.region}
+                    />
+                    {errors.region && (
+                      <TextErrorContainer>
+                        <ExclamationSVG />
+                        {t(`main:${errors.region.message}`, 'Please select a region')}
+                      </TextErrorContainer>
+                    )}
+                  </RegionContainer>
+                </>
+              ) : <></>
+            )}
           />
           {
             activeStep && (
