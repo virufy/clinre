@@ -241,7 +241,8 @@ const Step1 = (p: Wizard.StepProps) => {
                 placeholder={t('main.selectYourLanguage', 'Language')}
                 options={supportedLang.length > 0 ? supportedLang : languageData}
                 onChange={(e: any) => { onChange(e?.value); }}
-                value={supportedLang.length > 0 ? supportedLang.filter(({ value: optValue }) => optValue === value) : languageData.filter(({ value: optValue }) => optValue === value)} // Use 'value' from RHF Controller
+                value={supportedLang.length > 0 ? supportedLang.filter(({ value: optValue }) => optValue === value) : languageData.filter(({ value: optValue }) => optValue === value)}
+                  // Use 'value' from RHF Controller
                 className="custom-select"
                 classNamePrefix="custom-select"
                 isDisabled={false}
