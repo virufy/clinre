@@ -139,7 +139,7 @@ export async function doSubmit({
 
     const response = await axiosClient.post('saveClinre', body, {
       headers: {
-        'Content-Type': 'multipart/form-data; boundary=saveClinre',
+        'Content-Type': 'multipart/form-data',
       },
     });
 
