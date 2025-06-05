@@ -104,5 +104,8 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": "eslint --cache --fix"
+  },
+  "engines": {
+    "node": "14.21.3"
   }
 }
