@@ -1,6 +1,8 @@
 export const languageData = [
   { value: 'en', label: 'English' },
   { value: 'es', label: 'Español' },
+  { value: 'ar', label: 'العربية' },
+  { value: 'ur', label: 'اردو' },
   // { value: 'pt', label: 'Português' },
   // { value: 'fr', label: 'Français' },
   // { value: 'bn', label: 'বাংলা' },
