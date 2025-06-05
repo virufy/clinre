@@ -4,6 +4,11 @@ export const mapOfConsentFiles = {
       'default.html',
     ],
   },
+  'Saudi arabia': {
+    consentLang: [
+      'ar.html',
+    ],
+  },
   'United States': {
     consentLang: [
       'default.html',

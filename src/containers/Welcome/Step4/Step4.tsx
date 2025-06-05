@@ -68,7 +68,13 @@ const Step4 = (p: Wizard.StepProps) => {
   const {
     control, handleSubmit, formState,
   } = useForm({
-    defaultValues: store,
+    defaultValues: {
+      agreedConsentTerms: store?.agreedConsentTerms ?? false,
+      agreedPolicyTerms: store?.agreedPolicyTerms ?? false,
+      agreedCovidCollection: store?.agreedCovidCollection ?? false,
+      agreedTrainingArtificial: store?.agreedTrainingArtificial ?? false,
+      agreedBiometric: store?.agreedBiometric ?? false,
+    },
     resolver: yupResolver(schema),
     context: {
       country: currentCountry,
@@ -101,7 +107,8 @@ const Step4 = (p: Wizard.StepProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
 
   useEffect(() => {
     scrollToTop();
@@ -125,7 +132,10 @@ const Step4 = (p: Wizard.StepProps) => {
         </InnerContainerShapeDown>
       </ContainerShapeDown>
       <WelcomeContent>
-        <WelcomeConsentForm dangerouslySetInnerHTML={{ __html: isLoadingFile ? 'Loading...' : consentFormContent }} />
+        <WelcomeConsentForm
+          dangerouslySetInnerHTML={{ __html: isLoadingFile ? 'Loading...' : consentFormContent }}
+          dir={isRTL ? 'rtl' : 'ltr'}
+        />
 
         <BlackText>
           <Trans i18nKey="consent:paragraph3">

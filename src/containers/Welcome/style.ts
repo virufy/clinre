@@ -452,58 +452,46 @@ export const WelcomeNote = styled.span<WelcomeNoteProps>`
 
 /* Step 4 */
 
-export const CheckboxTitle = styled.div`
-  font-family: "Source Sans Pro";
-  font-size: 0.875rem;
-  line-height: 1.42;
-  font-weight: bold;
-  margin-top: 40px;
-  margin-bottom: 16px;
-  margin-left: 20px;
+export const CheckboxTitle = styled.h3`
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
+  color: ${props => props.theme.colors.mineShaft};
+  margin: 20px 0;
+  text-align: left;
+
+  [dir="rtl"] & {
+    text-align: right;
+  }
 `;
 
 export const WelcomeConsentForm = styled.div`
-  margin: 10px auto 20px auto;
-  background: #eee;
+  width: 100%;
+  height: 400px;
+  overflow-y: auto;
   padding: 20px;
-  max-height: 300px;
-  overflow-y: scroll;
-  border: solid 1px black;
+  background-color: ${props => props.theme.colors.midGray};
+  border-radius: 15px;
+  margin-bottom: 20px;
+  text-align: left;
 
-  .WordSection1 > p,
-  .Section1 > p {
-    margin-bottom: 0;
-    text-align: left !important;
-    margin-left: inherit !important;
-    text-indent: inherit !important;
+  [dir="rtl"] & {
+    text-align: right;
   }
 
-  .c4,
-  .c22 {
-    text-align: left;
+  h1, h2, h3, h4, h5, h6, p {
+    [dir="rtl"] & {
+      text-align: right;
+    }
   }
 
-  .c12,
-  .c10 {
-    padding: 0;
-    list-style-position: inside;
-    text-align: left;
-  }
-  
-  span {
-    font-family: "Source Sans Pro" !important;
-    font-size: 14px !important;
-    line-height: 20px !important;
-    font-weight: 400 !important;
-    color: ${props => props.theme.colors.mineShaft} !important;
-    background: transparent !important;
-  }
-
-  @media screen and (${props => props.theme.breakpoints.tablet}){
-    margin: 24px auto 28px auto;
-    max-width: 470px;
-    padding-left: 0px;
-    padding-right: 0px;
+  ul, ol {
+    [dir="rtl"] & {
+      padding-right: 20px;
+      padding-left: 0;
+    }
   }
 `;
 

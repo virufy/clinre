@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDatePicker from 'react-datepicker';
-import { endOfDay } from 'date-fns';
+import arSA, { endOfDay } from 'date-fns';
 
 // Images
 import calendarSvg from 'assets/icons/calendar.svg';
@@ -18,7 +18,8 @@ import {
 interface DatePickerProps {
   label: string;
   value: Date | null | undefined;
-  locale: string;
+  locale: string | Locale;
+  isRTL?: boolean;
   onChange(date: Date | [Date, Date] | null, event: React.SyntheticEvent<any, Event> | undefined): void
 }
 
@@ -48,20 +49,30 @@ DatePickerInput.defaultProps = {
 };
 
 const DatePicker = ({
-  label, value, locale, onChange,
+  label, value, locale, onChange, isRTL = false,
 }: DatePickerProps) => {
   // Memos
   const today = React.useMemo(() => endOfDay(new Date()), []);
 
+  // Determine locale object
+  let localeObj = locale;
+  if (typeof locale === 'string') {
+    if (locale.startsWith('ar')) {
+      localeObj = arSA;
+    }
+  }
+
   return (
-    <StyledReactDatePickerContainer>
+    <StyledReactDatePickerContainer dir={isRTL ? 'rtl' : 'ltr'}>
       <ReactDatePicker
         selected={value}
         customInput={<DatePickerInput label={label} />}
         onChange={onChange}
         dateFormat="EEE, MMM d, Y"
-        locale={locale}
+        locale={localeObj}
         maxDate={today}
+        // force RTL for Arabic
+        popperPlacement={isRTL ? 'bottom-end' : 'bottom-start'}
       />
     </StyledReactDatePickerContainer>
   );

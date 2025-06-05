@@ -135,6 +135,7 @@ const Step1 = ({
             label="Date"
             value={value ? new Date(value) : null}
             locale={i18n.language}
+            isRTL={i18n.language.startsWith('ar')}
             onChange={onChange}
           />
         )}

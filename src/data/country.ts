@@ -473,7 +473,7 @@ export const countryData: CountryDataProps[] = [
     label: 'Sao tome and principe', value: 'Sao tome and principe', telephonePrefix: '', states: states.SaoTome, defaultLang: [{ value: 'en', label: 'English' }], supportedLang: languageData,
   },
   {
-    label: 'Saudi arabia', value: 'Saudi arabia', telephonePrefix: '', states: states.Saudi, defaultLang: [{ value: 'en', label: 'English' }], supportedLang: languageData,
+    label: 'Saudi arabia', value: 'Saudi arabia', telephonePrefix: '', states: states.Saudi, defaultLang: [{ value: 'ar', label: 'Arabic' }], supportedLang: languageData,
   },
   {
     label: 'Senegal', value: 'Senegal', telephonePrefix: '', states: states.Senegal, defaultLang: [{ value: 'en', label: 'English' }], supportedLang: languageData,

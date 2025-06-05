@@ -126,7 +126,12 @@ const Step1 = (p: Wizard.StepProps) => {
   const lang = watch('language');
 
   useEffect(() => {
-    i18n.changeLanguage(lang);
+    if (lang) {
+      i18n.changeLanguage(lang);
+      localStorage.setItem('clinre-language', lang);
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    }
   }, [i18n, lang]);
 
   const regionSelectOptions = useMemo(() => {
@@ -137,12 +142,13 @@ const Step1 = (p: Wizard.StepProps) => {
       const elem = countryData.find(a => a.value === currentCountry);
       if (elem) {
         elem.states.forEach(s => {
-          output.push({ label: s, value: s });
+          const translatedRegion = t(`main:regions.${currentCountry}.${s}`, s);
+          output.push({ label: translatedRegion, value: s });
         });
       }
     }
     return output;
-  }, [t]);
+  }, [t, currentCountry]);
 
   // Combined useEffect for language initialization
   useEffect(() => {
@@ -153,6 +159,8 @@ const Step1 = (p: Wizard.StepProps) => {
     const allowedLanguages = [
       { value: 'en', label: 'English' },
       { value: 'es', label: 'Español' },
+      { value: 'ar', label: 'العربية' },
+      { value: 'ur', label: 'اردو' },
     ];
 
     let languageSetByLocalStorageOrTimezone = false;

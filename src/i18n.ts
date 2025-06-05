@@ -15,15 +15,21 @@ registerLocale('es', es);
 // Translations
 i18n
   .use(LanguageDetector)
-  .use(initReactI18next) // passes i18n down to react-i18next
+  .use(initReactI18next)
   .init({
     resources: locales,
     ns: 'main',
     missingKeyHandler: false,
 
-    supportedLngs: ['en', 'es'],
-    fallbackLng: 'es',
+    supportedLngs: ['en', 'es', 'ar', 'ur'],
+    fallbackLng: 'en',
     fallbackNS: 'main',
+
+    detection: {
+      order: ['localStorage', 'navigator'],
+      caches: ['localStorage'],
+      lookupLocalStorage: 'clinre-language',
+    },
 
     interpolation: {
       escapeValue: false,
