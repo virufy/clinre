@@ -1,5 +1,9 @@
 # Virufy PWA
 
+## IMPORTANT
+Before you merge your changes to main, please test them in the stagig branch first. The staging branch is set up to a
+[live demo](https://clinre.netlify.app) so you can view your changes in a live environment BEFORE you merge them to main.
+
 ## Translations
 
 Translations files are located in `src/locales` folder.
